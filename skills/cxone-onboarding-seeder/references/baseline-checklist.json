@@ -1,0 +1,174 @@
+[
+  {
+    "title": "Pre-kickoff readiness",
+    "sub": "Confirm this before the kickoff call, not during it",
+    "items": [
+      {
+        "t": "Confirm license / entitlement scope matches what's being piloted or demoed (which scanners, how many repos/apps)",
+        "l": "https://docs.checkmarx.com/en/34965-724213-viewing-license-info-and-upgrading-a-license.html"
+      },
+      {
+        "t": "Confirm firewall / IP allowlist requirements, especially for self-hosted SCM, on-prem tools, or locked-down networks",
+        "l": "https://docs.checkmarx.com/en/34965-68616-managing-checkmarx-one-traffic-and-aws-s3-access.html"
+      },
+      {
+        "t": "If repos are self-hosted or not internet-accessible, confirm whether IP-based repo configuration is needed instead of hostname resolution",
+        "l": "https://docs.checkmarx.com/en/34965-86574-github-self-hosted.html"
+      },
+      {
+        "t": "Identify who owns each access decision on the customer's side (SSO/IAM admin, repo admin, security lead) so the kickoff isn't stalled waiting on the right person"
+      }
+    ]
+  },
+  {
+    "title": "Tenant & account fundamentals",
+    "sub": "Initial login, global settings",
+    "items": [
+      {
+        "t": "Complete initial admin login",
+        "l": "https://docs.checkmarx.com/en/34965-68531-initial-log-in.html"
+      },
+      {
+        "t": "Review global account settings (scanner defaults, AI Assist, domain management)",
+        "l": "https://docs.checkmarx.com/en/34965-68598-global-account-settings.html"
+      }
+    ]
+  },
+  {
+    "title": "Identity & access management",
+    "sub": "SSO, groups/roles, API keys",
+    "items": [
+      {
+        "t": "Decide SSO vs. local auth; configure SAML/OIDC or LDAP",
+        "l": "https://docs.checkmarx.com/en/34965-68605-managing-identity-providers.html"
+      },
+      {
+        "t": "Create groups and map roles (avoid one-off user-level permissions)",
+        "l": "https://docs.checkmarx.com/en/34965-68602-managing-groups.html"
+      },
+      {
+        "t": "Generate API keys / OAuth clients for CI/CD and IDE integrations, scoped to least privilege",
+        "l": "https://docs.checkmarx.com/en/34965-188712-creating-api-keys.html"
+      }
+    ]
+  },
+  {
+    "title": "Applications & project structure",
+    "sub": "Hierarchy before projects",
+    "items": [
+      {
+        "t": "Define the Application hierarchy first (business units, product lines) before creating projects",
+        "l": "https://docs.checkmarx.com/en/34965-68554-creating-applications.html"
+      },
+      {
+        "t": "Decide project structure (per-repo vs. other) and naming conventions",
+        "l": "https://docs.checkmarx.com/en/34965-68534-creating-projects.html"
+      },
+      {
+        "t": "Decide on config-as-code if scan config should live in-repo",
+        "l": "https://docs.checkmarx.com/en/34965-68549-configuring-projects-using-config-as-code-files.html"
+      }
+    ]
+  },
+  {
+    "title": "Scanner configuration",
+    "sub": "Finish this before connecting repositories in the next step — a connection can auto-trigger the baseline scan",
+    "items": [
+      {
+        "t": "Set scanner parameters per engine before the first real scan (SAST, SCA, IaC, API Security, Secrets, Container)",
+        "l": "https://docs.checkmarx.com/en/34965-324311-settings-for-specific-scanners.html"
+      },
+      {
+        "t": "Select SAST preset",
+        "l": "https://docs.checkmarx.com/en/34965-131121-presets-management.html"
+      },
+      {
+        "t": "For large/complex codebases, validate expected project size and structure ahead of time (avoid timeouts / misleading first-scan results)"
+      }
+    ]
+  },
+  {
+    "title": "Code repository integration & baseline scan",
+    "sub": "Confirm scanner configuration above is finished first",
+    "items": [
+      {
+        "t": "Connect SCM (GitHub / GitLab / Bitbucket / Azure DevOps) — managed vs. self-hosted",
+        "l": "https://docs.checkmarx.com/en/34965-68677-code-repository-integrations.html"
+      },
+      {
+        "t": "Decide on auto-onboarding of new repos",
+        "l": "https://docs.checkmarx.com/en/34965-119549-monitor-new-repositories.html"
+      },
+      {
+        "t": "Confirm repository coverage matches what leadership expects",
+        "l": "https://docs.checkmarx.com/en/34965-148241-code-repository-coverage.html"
+      }
+    ]
+  },
+  {
+    "title": "CI/CD pipeline integration",
+    "sub": "Plugin selection",
+    "items": [
+      {
+        "t": "Pick the plugin(s) matching the customer's pipeline (Jenkins, GitHub Actions, Azure DevOps, GitLab, CircleCI, Bamboo, etc.)",
+        "l": "https://docs.checkmarx.com/en/34965-68684-ci-cd-integrations.html"
+      }
+    ]
+  },
+  {
+    "title": "Policy, break-build gates & notifications",
+    "sub": "Decide gating before devs see output, not after",
+    "items": [
+      {
+        "t": "Define policies — which findings block builds, which just report",
+        "l": "https://docs.checkmarx.com/en/34965-135219-policy-management-overview.html"
+      },
+      {
+        "t": "Leave break-build off by default. If turning it on for a POV, be upfront that developers will start seeing scan output in their pipeline as soon as it's enabled — agree on a non-critical test repo, or make sure the team is briefed before flipping it on broadly",
+        "l": "https://docs.checkmarx.com/en/34965-348740-policy-management---break-build.html"
+      },
+      {
+        "t": "Set up ticketing/notification integration (Jira, Azure Boards, Slack, Teams, email)",
+        "l": "https://docs.checkmarx.com/en/34965-68747-feedback-apps.html"
+      }
+    ]
+  },
+  {
+    "title": "IDE plugins / Developer Assist rollout",
+    "sub": "Dev-team adoption",
+    "items": [
+      {
+        "t": "Roll out IDE plugins (VS Code, JetBrains, Visual Studio, Eclipse, Cursor, Windsurf) for teams wanting inline results",
+        "l": "https://docs.checkmarx.com/en/34965-68727-checkmarx-one-ide-plugins.html"
+      },
+      {
+        "t": "Scope Developer Assist / AI remediation adoption separately if in scope",
+        "l": "https://docs.checkmarx.com/en/34965-719261-about-checkmarx-developer-assist.html"
+      }
+    ]
+  },
+  {
+    "title": "Reporting & executive visibility",
+    "sub": "Dashboards leadership will use",
+    "items": [
+      {
+        "t": "Set up dashboards security/eng leadership will actually look at",
+        "l": "https://docs.checkmarx.com/en/34965-195677-analytics.html"
+      },
+      {
+        "t": "Confirm report cadence/format expectations (feeds into Executive Health Checks later)",
+        "l": "https://docs.checkmarx.com/en/34965-146345-checkmarx-one-reports.html"
+      }
+    ]
+  },
+  {
+    "title": "Migration (if replacing legacy CxSAST)",
+    "sub": "Only if not greenfield",
+    "items": [
+      {
+        "t": "Scope SAST-to-CxOne migration as its own workstream if applicable",
+        "l": "https://docs.checkmarx.com/en/34965-68666-migrating-from-sast-to-checkmarx-one.html"
+      }
+    ]
+  }
+]

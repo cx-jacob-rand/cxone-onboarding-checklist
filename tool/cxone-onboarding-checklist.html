@@ -1,0 +1,2624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Checkmarx One — Onboarding Checklist</title>
+<style>
+  :root{
+    --violet:#6B34FD;
+    --magenta:#A822BF;
+    --midnight:#140920;
+    --orange:#F25929;
+    --white:#FCF9FE;
+
+    --bg: var(--midnight);
+    --panel: #1C1030;
+    --panel-2: #24173C;
+    --border: #3A2A55;
+    --text: var(--white);
+    --text-dim: #B9AEC9;
+    --text-dimmer: #7F7096;
+    --accent: var(--violet);
+    --accent-2: var(--magenta);
+    --done: #35C48A;
+    --unsupported: #E0383E;
+    --cs: dark;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg: #F3EFFB;
+      --panel: #FFFFFF;
+      --panel-2: #F7F3FF;
+      --border: #E1D6F5;
+      --text: var(--midnight);
+      --text-dim: #4A3D63;
+      --text-dimmer: #8A7BA3;
+      --cs: light;
+    }
+  }
+  :root[data-theme="light"]{
+    --bg: #F3EFFB;
+    --panel: #FFFFFF;
+    --panel-2: #F7F3FF;
+    --border: #E1D6F5;
+    --text: var(--midnight);
+    --text-dim: #4A3D63;
+    --text-dimmer: #8A7BA3;
+    --cs: light;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    background:var(--bg);
+    color:var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:32px 20px 80px;
+  }
+
+  /* header */
+  header.top{
+    position:sticky; top:env(safe-area-inset-top,0px);
+    z-index:20;
+    background:linear-gradient(180deg, var(--bg) 78%, transparent);
+    padding:14px 0 10px;
+    margin-bottom:8px;
+  }
+  .titlebar{
+    display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+    flex-wrap:wrap;
+  }
+  .titlebar h1{
+    font-size:1.35rem;
+    letter-spacing:-0.01em;
+    margin:0;
+    font-weight:700;
+  }
+  .titlebar h1 span{color:var(--accent-2);}
+  .theme-toggle{
+    background:none; border:1px solid var(--border); color:var(--text-dim);
+    border-radius:20px; padding:5px 12px; font-size:0.75rem; cursor:pointer;
+  }
+  .theme-toggle:hover{border-color:var(--accent);}
+
+  .subrow{
+    display:flex; gap:10px; align-items:center; margin-top:14px; flex-wrap:wrap;
+  }
+  .field{
+    flex:1 1 220px;
+    min-width:180px;
+  }
+  label.tiny{
+    display:block; font-size:0.7rem; color:var(--text-dimmer);
+    margin-bottom:4px;
+  }
+  input[type=text]{
+    width:100%;
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px 12px;
+    border-radius:8px;
+    font-size:0.9rem;
+  }
+  input[type=text]:focus{outline:2px solid var(--accent); outline-offset:1px;}
+
+  select{
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px 10px;
+    border-radius:8px;
+    font-size:0.85rem;
+    max-width:220px;
+  }
+
+  .cust-list-panel{
+    display:none;
+    position:absolute;
+    top:calc(100% + 4px);
+    left:0; right:0;
+    z-index:30;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    box-shadow:0 12px 28px rgba(0,0,0,.35);
+    max-height:280px;
+    overflow-y:auto;
+    padding:4px;
+  }
+  .cust-list-panel.open{ display:block; }
+  .cust-list-group-label{
+    font-size:0.63rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--text-dimmer); padding:7px 8px 3px;
+  }
+  .cust-list-row{
+    display:flex; align-items:center; gap:6px;
+    padding:7px 8px; border-radius:7px; cursor:pointer;
+  }
+  .cust-list-row:hover{ background:var(--panel-2); }
+  .cust-list-row.active{ color:var(--accent-2); font-weight:600; }
+  .cust-list-row-name{ flex:1; font-size:0.84rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cust-list-row-x{
+    background:none; border:none; color:var(--text-dimmer);
+    font-size:1rem; line-height:1; padding:2px 4px; cursor:pointer; flex-shrink:0;
+  }
+  .cust-list-row-x:hover{ color:var(--orange); }
+
+  .btn{
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    padding:9px 14px;
+    border-radius:8px;
+    font-size:0.82rem;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .btn:hover{ color:var(--text); border-color:var(--accent); }
+  .btn.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  .btn.primary:hover{ background:var(--accent-2); border-color:var(--accent-2); }
+  .btn.danger:hover{ border-color:var(--orange); color:var(--orange); }
+
+  /* progress */
+  .progress-shell{
+    margin-top:16px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .progress-num{
+    font-size:1.6rem; font-weight:700; min-width:64px;
+  }
+  .progress-track{
+    flex:1;
+    height:8px;
+    border-radius:5px;
+    background:var(--border);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius:5px;
+    transition:width .35s ease;
+  }
+  .progress-label{ font-size:0.75rem; color:var(--text-dimmer); min-width:90px; text-align:right;}
+  .progress-sub{ font-size:0.7rem; color:var(--text-dimmer); margin-top:5px; }
+
+  .persist-banner{
+    margin-top:12px;
+    padding:10px 14px;
+    border-radius:10px;
+    font-size:0.82rem;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .persist-banner.warn{
+    background:rgba(242,89,41,0.1);
+    border:1px solid var(--orange);
+    color:var(--orange);
+  }
+  .persist-banner.ok{
+    background:rgba(53,196,138,0.08);
+    border:1px solid var(--done);
+    color:var(--done);
+  }
+  .persist-banner button{
+    background:none;
+    border:1px solid currentColor;
+    color:inherit;
+    border-radius:8px;
+    padding:4px 10px;
+    font-size:0.78rem;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+
+  /* sections */
+  .sections{ margin-top:26px; }
+  .section{
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:var(--panel);
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+  .section-head{
+    display:flex; align-items:center; gap:14px;
+    padding:15px 16px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .section-num{
+    width:30px; height:30px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.8rem; font-weight:700;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    flex-shrink:0;
+  }
+  .section.complete .section-num{
+    background:var(--done); border-color:var(--done); color:#fff;
+  }
+  .section-title{
+    flex:1;
+    font-size:0.98rem;
+    font-weight:600;
+  }
+  .section-sub{
+    font-size:0.72rem; color:var(--text-dimmer); font-weight:400; margin-top:2px;
+  }
+  .section-count{
+    font-size:0.75rem; color:var(--text-dimmer);
+    white-space:nowrap;
+  }
+  .chevron{
+    width:9px; height:9px;
+    border-right:2px solid var(--text-dimmer);
+    border-bottom:2px solid var(--text-dimmer);
+    transform:rotate(45deg);
+    transition:transform .2s ease;
+    flex-shrink:0;
+    margin-right:2px;
+  }
+  .section.open .chevron{ transform:rotate(-135deg); }
+
+  .section-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .25s ease;
+  }
+  /* No fixed cap: open sections grow to fit all items (a 2000px cap clipped long customer-requirement lists) */
+  .section.open .section-body{ max-height:none; overflow:visible; }
+
+  .items{ padding:2px 16px 16px; }
+  .item{
+    display:flex; gap:12px; align-items:flex-start;
+    padding:9px 4px;
+    border-top:1px solid var(--border);
+  }
+  .items .item:first-child{ border-top:none; }
+
+  .item input[type=checkbox]{
+    appearance:none; -webkit-appearance:none;
+    width:19px; height:19px;
+    border-radius:5px;
+    border:1.5px solid var(--text-dimmer);
+    background:transparent;
+    cursor:pointer;
+    flex-shrink:0;
+    margin-top:2px;
+    position:relative;
+    transition:background .15s, border-color .15s;
+  }
+  .item input[type=checkbox]:checked{
+    background:var(--done);
+    border-color:var(--done);
+  }
+  .item input[type=checkbox]:checked::after{
+    content:"";
+    position:absolute;
+    left:5px; top:1px;
+    width:5px; height:9px;
+    border-right:2px solid white;
+    border-bottom:2px solid white;
+    transform:rotate(40deg);
+  }
+  .item input[type=checkbox]:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+
+  .item-text{ flex:1; }
+  .item-text label{
+    font-size:0.88rem;
+    line-height:1.45;
+    cursor:pointer;
+  }
+  .item.done .item-text label{
+    color:var(--text-dimmer);
+    text-decoration:line-through;
+    text-decoration-color:var(--border);
+  }
+  .item-link{
+    display:inline-block;
+    margin-top:3px;
+    font-size:0.74rem;
+    color:var(--accent-2);
+    text-decoration:none;
+    border-bottom:1px dotted currentColor;
+  }
+  .item-link:hover{ color:var(--accent); }
+
+  .item.custom-item{
+    border:1.5px dashed var(--orange);
+    border-radius:10px;
+    padding:10px 12px;
+    margin:8px 0;
+    background:rgba(242,89,41,0.06);
+  }
+  .item.custom-item:first-child{ margin-top:8px; }
+  .custom-flag{
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:0.62rem; font-weight:700;
+    letter-spacing:.04em; text-transform:uppercase;
+    color:var(--orange);
+    margin-bottom:4px;
+  }
+  .custom-flag::before{
+    content:"";
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--orange);
+    flex-shrink:0;
+  }
+  .custom-meta{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    margin-top:5px;
+  }
+  .badge-feas{
+    display:inline-block;
+    font-size:0.63rem;
+    font-weight:700;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    border-radius:20px;
+    padding:2px 10px;
+    border:1px solid currentColor;
+    background:none;
+    cursor:pointer;
+  }
+  .badge-feas.feas-yes{ color:var(--done); }
+  .badge-feas.feas-no{ color:var(--unsupported); }
+  .badge-feas.feas-unknown{ color:var(--text-dimmer); }
+  .note-toggle{
+    background:none; border:none;
+    color:var(--accent-2);
+    font-size:0.7rem;
+    cursor:pointer;
+    padding:0;
+    text-decoration:underline;
+  }
+  .feas-note{
+    margin-top:5px;
+    font-size:0.78rem;
+    color:var(--text-dim);
+  }
+  .feas-note-form{
+    display:flex; flex-direction:column; gap:6px; margin-top:7px;
+  }
+  .feas-note-form textarea{
+    width:100%; min-height:50px;
+    background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+    border-radius:8px; padding:7px 9px; font-size:0.82rem; font-family:inherit; resize:vertical;
+  }
+  .feas-note-form input[type=text]{ width:100%; }
+  .feas-note-form-row, .item-note-form-row{
+    display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+  }
+
+  .audience-toggle, .audience-toggle-edit{
+    display:inline-block;
+    font-size:0.68rem;
+    font-weight:700;
+    letter-spacing:.02em;
+    border-radius:20px;
+    padding:2px 10px;
+    border:1px solid currentColor;
+    background:none;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .aud-internal{ color: var(--text-dimmer); }
+  .aud-customer{ color: var(--done); }
+
+  .item-note-block{ margin-top:8px; }
+  .item-note-row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .item-note-text{ margin-top:5px; font-size:0.78rem; color:var(--text-dim); }
+  .item-note-form{
+    display:flex; flex-direction:column; gap:6px; margin-top:7px;
+  }
+  .item-note-form textarea{
+    width:100%; min-height:50px;
+    background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+    border-radius:8px; padding:7px 9px; font-size:0.82rem; font-family:inherit; resize:vertical;
+  }
+  /* Expected / done dates (native calendar popup) */
+  .date-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:6px; }
+  .date-chip{ position:relative; display:inline-flex; align-items:center; gap:2px; }
+  .date-btn{
+    background:none; border:1px solid var(--border);
+    color:var(--text-dimmer);
+    border-radius:20px; padding:2px 10px;
+    font-size:0.68rem; font-weight:600;
+    cursor:pointer; white-space:nowrap;
+  }
+  .date-btn:hover{ border-color:var(--accent-2); color:var(--accent-2); }
+  .date-btn.has-value{ color:var(--text-dim); }
+  .date-btn.done-date{ color:var(--done); border-color:var(--done); }
+  .date-btn.overdue{ color:var(--orange); border-color:var(--orange); }
+  .date-clear{
+    background:none; border:none; padding:0 3px;
+    color:var(--text-dimmer); font-size:0.95rem; line-height:1; cursor:pointer;
+  }
+  .date-clear:hover{ color:var(--orange); }
+  .date-chip input[type=date]{
+    position:absolute; left:0; top:100%;
+    width:1px; height:1px; opacity:0; pointer-events:none;
+    border:0; padding:0; color-scheme:var(--cs);
+  }
+  .date-chip input[type=date].visible{
+    position:static; width:auto; height:auto; opacity:1; pointer-events:auto;
+    margin-left:6px; padding:2px 6px;
+    background:var(--panel-2); color:var(--text);
+    border:1px solid var(--border); border-radius:6px; font-size:0.72rem;
+  }
+
+  /* Internal notes: private, per-item, click to add. Never exported to the PDF. */
+  .int-note{ margin-top:8px; }
+  .int-note-add{
+    background:none; border:none; padding:0;
+    color:var(--text-dimmer);
+    font-size:0.7rem; cursor:pointer;
+    text-decoration:underline dotted;
+  }
+  .int-note-add:hover{ color:var(--accent-2); }
+  .int-note-view{
+    border-left:3px solid var(--accent-2);
+    background:var(--panel-2);
+    border-radius:0 8px 8px 0;
+    padding:6px 10px;
+    cursor:pointer;
+  }
+  .int-note-view:hover{ filter:brightness(1.08); }
+  .int-note-label{
+    font-size:0.62rem; font-weight:700;
+    letter-spacing:.04em; text-transform:uppercase;
+    color:var(--text-dimmer);
+  }
+  .int-note-text{
+    margin-top:2px;
+    font-size:0.8rem; line-height:1.45;
+    color:var(--text);
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+  }
+  .int-note-form{ display:flex; flex-direction:column; gap:6px; }
+  .int-note-form textarea{
+    width:100%; min-height:60px;
+    background:var(--panel-2); border:1px solid var(--accent-2); color:var(--text);
+    border-radius:8px; padding:7px 9px; font-size:0.82rem; font-family:inherit; resize:vertical;
+  }
+  .int-note-form-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+
+  .item-remove{
+    background:none; border:none;
+    color:var(--text-dimmer);
+    font-size:1.1rem; line-height:1;
+    cursor:pointer;
+    padding:0 2px 0 8px;
+    flex-shrink:0;
+    align-self:flex-start;
+  }
+  .item-remove:hover{ color:var(--orange); }
+
+  .item-actions{
+    display:flex; gap:4px; align-self:flex-start; flex-shrink:0;
+  }
+  .item-edit-btn, .item-hide-btn{
+    background:none; border:1px solid var(--border);
+    color:var(--text-dimmer);
+    border-radius:6px;
+    width:24px; height:24px;
+    font-size:0.8rem;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .item-edit-btn:hover{ border-color:var(--accent-2); color:var(--accent-2); }
+  .item-hide-btn:hover{ border-color:var(--orange); color:var(--orange); }
+  .item-edit-form{
+    display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;
+  }
+  .item-edit-form input[type=text]{ flex:1; min-width:180px; }
+
+  .item.item-hidden{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px;
+    padding:7px 4px;
+    border-top:1px solid var(--border);
+    opacity:0.6;
+  }
+  .items .item.item-hidden:first-child{ border-top:none; }
+  .hidden-label{
+    font-size:0.82rem;
+    color:var(--text-dimmer);
+    text-decoration:line-through;
+    text-decoration-color:var(--border);
+  }
+  .restore-btn{
+    background:none; border:1px solid var(--border);
+    color:var(--accent-2);
+    border-radius:7px;
+    padding:3px 10px;
+    font-size:0.74rem;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .restore-btn:hover{ border-color:var(--accent-2); }
+
+  .hide-section-btn{
+    background:none; border:1px solid var(--border);
+    color:var(--text-dimmer);
+    border-radius:6px;
+    width:26px; height:26px;
+    font-size:0.85rem;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .hide-section-btn:hover{ border-color:var(--orange); color:var(--orange); }
+
+  .section.section-hidden{ opacity:0.65; }
+  .section.section-hidden .section-head{ cursor:default; }
+  .hidden-tag{
+    font-size:0.68rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    color:var(--orange);
+    margin-left:6px;
+  }
+  .restore-section-btn{
+    flex-shrink:0;
+    background:none; border:1px solid var(--orange);
+    color:var(--orange);
+    border-radius:7px;
+    padding:4px 12px;
+    font-size:0.78rem;
+    cursor:pointer;
+  }
+
+  .add-req{ padding:8px 4px 2px; }
+  .add-req-btn{
+    background:none;
+    border:1px dashed var(--border);
+    color:var(--text-dimmer);
+    border-radius:8px;
+    padding:7px 12px;
+    font-size:0.78rem;
+    cursor:pointer;
+    width:100%;
+    text-align:left;
+  }
+  .add-req-btn:hover{ border-color:var(--accent-2); color:var(--accent-2); }
+  .add-req-form{
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+  }
+  .add-req-form input[type=text]{ flex:1; min-width:160px; }
+
+  .section-note{
+    margin:8px 4px 4px;
+  }
+  .section-note textarea{
+    width:100%;
+    min-height:52px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:8px;
+    padding:8px 10px;
+    font-size:0.82rem;
+    font-family:inherit;
+    resize:vertical;
+  }
+  .section-note label.tiny{ margin-bottom:5px; }
+
+  footer.bottom{
+    margin-top:28px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--accent);
+    color:#fff;
+    padding:10px 18px;
+    border-radius:30px;
+    font-size:0.82rem;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+    z-index:50;
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @media (max-width:520px){
+    .titlebar h1{ font-size:1.1rem; }
+    .progress-num{ font-size:1.3rem; }
+    .section-title{ font-size:0.9rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="titlebar">
+      <h1>Checkmarx <span>One</span> — Onboarding Checklist</h1>
+      <button class="theme-toggle" id="themeToggle" type="button">Toggle theme</button>
+    </div>
+
+    <div class="subrow">
+      <div class="field">
+        <label class="tiny" for="custName">Customer</label>
+        <input type="text" id="custName" placeholder="e.g. Thundercrest Fizzwidget Corp" autocomplete="off">
+      </div>
+      <div class="field" style="flex:0 1 220px; min-width:170px; position:relative;">
+        <label class="tiny" for="custListToggle">Saved checklists</label>
+        <button type="button" class="btn" id="custListToggle" style="width:100%; text-align:left; display:flex; justify-content:space-between; align-items:center;">
+          <span id="custListToggleLabel">— new —</span><span style="opacity:.6;">▾</span>
+        </button>
+        <div class="cust-list-panel" id="custListPanel"></div>
+      </div>
+      <div style="align-self:flex-end; display:flex; gap:8px;">
+        <button class="btn" id="exportBtn" type="button">Export PDF</button>
+        <button class="btn danger" id="resetBtn" type="button">Reset</button>
+        <button class="btn danger" id="deleteBtn" type="button">Delete…</button>
+      </div>
+    </div>
+
+    <div class="persist-banner" id="persistBanner" style="display:none;"></div>
+
+    <div class="progress-shell">
+      <div class="progress-num" id="progressNum">0%</div>
+      <div style="flex:1;">
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <div class="progress-sub" id="progressSub">Setup 0/0</div>
+      </div>
+      <div class="progress-label" id="progressLabel">0 / 0 done</div>
+    </div>
+
+    <div class="progress-shell" style="margin-top:10px; flex-wrap:wrap;">
+      <div id="vaultStatus" style="flex:1; min-width:180px; font-size:0.78rem; color:var(--text-dim);">Checking folder support…</div>
+      <button class="btn" id="vaultConnectBtn" type="button">Connect folder…</button>
+      <button class="btn" id="mdSaveBtn" type="button">Save Markdown</button>
+      <button class="btn" id="mdLoadBtn" type="button">Load Markdown</button>
+    </div>
+  </header>
+
+  <div class="sections" id="sections"></div>
+
+  <footer class="bottom">
+    <span style="font-size:0.72rem; color:var(--text-dimmer); align-self:center;">Saved automatically in this browser, per customer name — and synced to your vault folder if one's connected.</span>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const DOCS = "https://docs.checkmarx.com/en/";
+
+const DATA = [
+  {
+    title: "Pre-kickoff readiness",
+    sub: "Confirm this before the kickoff call, not during it",
+    items: [
+      { t: "Confirm license / entitlement scope matches what's being piloted or demoed (which scanners, how many repos/apps)", l: DOCS+"34965-724213-viewing-license-info-and-upgrading-a-license.html" },
+      { t: "Confirm firewall / IP allowlist requirements, especially for self-hosted SCM, on-prem tools, or locked-down networks", l: DOCS+"34965-68616-managing-checkmarx-one-traffic-and-aws-s3-access.html" },
+      { t: "If repos are self-hosted or not internet-accessible, confirm whether IP-based repo configuration is needed instead of hostname resolution", l: DOCS+"34965-86574-github-self-hosted.html" },
+      { t: "Identify who owns each access decision on the customer's side (SSO/IAM admin, repo admin, security lead) so the kickoff isn't stalled waiting on the right person", l: DOCS+"34965-68605-managing-identity-providers.html" }
+    ]
+  },
+  {
+    title: "Tenant & account fundamentals",
+    sub: "Initial login, global settings",
+    items: [
+      { t: "Complete initial admin login", l: DOCS+"34965-68531-initial-log-in.html" },
+      { t: "Review global account settings (scanner defaults, AI Assist, domain management)", l: DOCS+"34965-68598-global-account-settings.html" }
+    ]
+  },
+  {
+    title: "Identity & access management",
+    sub: "SSO, groups/roles, API keys",
+    items: [
+      { t: "Decide SSO vs. local auth; configure SAML/OIDC or LDAP", l: DOCS+"34965-68605-managing-identity-providers.html" },
+      { t: "Create groups and map roles (avoid one-off user-level permissions)", l: DOCS+"34965-68602-managing-groups.html" },
+      { t: "Generate API keys / OAuth clients for CI/CD and IDE integrations, scoped to least privilege", l: DOCS+"34965-188712-creating-api-keys.html" }
+    ]
+  },
+  {
+    title: "Applications & project structure",
+    sub: "Hierarchy before projects",
+    items: [
+      { t: "Define the Application hierarchy first (business units, product lines) before creating projects", l: DOCS+"34965-68554-creating-applications.html" },
+      { t: "Decide project structure (per-repo vs. other) and naming conventions", l: DOCS+"34965-68534-creating-projects.html" },
+      { t: "Decide on config-as-code if scan config should live in-repo", l: DOCS+"34965-68549-configuring-projects-using-config-as-code-files.html" }
+    ]
+  },
+  {
+    title: "Scanner configuration",
+    sub: "Finish this before connecting repositories in the next step — a connection can auto-trigger the baseline scan",
+    items: [
+      { t: "Set scanner parameters per engine before the first real scan (SAST, SCA, IaC, API Security, Secrets, Container)", l: DOCS+"34965-324311-settings-for-specific-scanners.html" },
+      { t: "Select SAST preset", l: DOCS+"34965-131121-presets-management.html" },
+      { t: "For large/complex codebases, validate expected project size and structure ahead of time (avoid timeouts / misleading first-scan results)", l: DOCS+"34965-239680-file-exclusions-rules.html" }
+    ]
+  },
+  {
+    title: "Code repository integration & baseline scan",
+    sub: "Confirm scanner configuration above is finished first",
+    items: [
+      { t: "Connect SCM (GitHub / GitLab / Bitbucket / Azure DevOps) — managed vs. self-hosted", l: DOCS+"34965-68677-code-repository-integrations.html" },
+      { t: "Decide on auto-onboarding of new repos", l: DOCS+"34965-119549-monitor-new-repositories.html" },
+      { t: "Confirm repository coverage matches what leadership expects", l: DOCS+"34965-148241-code-repository-coverage.html" }
+    ]
+  },
+  {
+    title: "CI/CD pipeline integration",
+    sub: "Plugin selection",
+    items: [
+      { t: "Pick the plugin(s) matching the customer's pipeline (Jenkins, GitHub Actions, Azure DevOps, GitLab, CircleCI, Bamboo, etc.)", l: DOCS+"34965-68684-ci-cd-integrations.html" }
+    ]
+  },
+  {
+    title: "Policy, break-build gates & notifications",
+    sub: "Decide gating before devs see output, not after",
+    items: [
+      { t: "Define policies — which findings block builds, which just report", l: DOCS+"34965-135219-policy-management-overview.html" },
+      { t: "Leave break-build off by default. If turning it on for a POV, be upfront that developers will start seeing scan output in their pipeline as soon as it's enabled — agree on a non-critical test repo, or make sure the team is briefed before flipping it on broadly", l: DOCS+"34965-348740-policy-management---break-build.html" },
+      { t: "Set up ticketing/notification integration (Jira, Azure Boards, Slack, Teams, email)", l: DOCS+"34965-68747-feedback-apps.html" }
+    ]
+  },
+  {
+    title: "IDE plugins / Developer Assist rollout",
+    sub: "Dev-team adoption",
+    items: [
+      { t: "Roll out IDE plugins (VS Code, JetBrains, Visual Studio, Eclipse, Cursor, Windsurf) for teams wanting inline results", l: DOCS+"34965-68727-checkmarx-one-ide-plugins.html" },
+      { t: "Scope Developer Assist / AI remediation adoption separately if in scope", l: DOCS+"34965-719261-about-checkmarx-developer-assist.html" }
+    ]
+  },
+  {
+    title: "Reporting & executive visibility",
+    sub: "Dashboards leadership will use",
+    items: [
+      { t: "Set up dashboards security/eng leadership will actually look at", l: DOCS+"34965-195677-analytics.html" },
+      { t: "Confirm report cadence/format expectations (feeds into Executive Health Checks later)", l: DOCS+"34965-146345-checkmarx-one-reports.html" }
+    ]
+  },
+  {
+    title: "Migration (if replacing legacy CxSAST)",
+    sub: "Only if not greenfield",
+    items: [
+      { t: "Scope SAST-to-CxOne migration as its own workstream if applicable", l: DOCS+"34965-68666-migrating-from-sast-to-checkmarx-one.html" }
+    ]
+  }
+];
+
+const STORAGE_PREFIX = "cxone_onboarding_v1__";
+let currentKey = null;
+let openSections = new Set([0]); // which section indices are expanded; survives re-render
+
+function slug(s){
+  return (s||"").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+}
+
+function slugOfKey(key){
+  return key && key.indexOf(STORAGE_PREFIX)===0 ? key.slice(STORAGE_PREFIX.length) : (key||"");
+}
+
+function listLocalCustomers(){
+  const out = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k && k.indexOf(STORAGE_PREFIX)===0){
+      try{
+        const d = JSON.parse(localStorage.getItem(k));
+        out.push({key:k, id: slugOfKey(k), name: d.name || slugOfKey(k)});
+      }catch(e){}
+    }
+  }
+  out.sort((a,b)=>a.name.localeCompare(b.name));
+  return out;
+}
+
+function defaultState(name){
+  return {
+    name: name || "",
+    checked: {},          // "sectionIdx-itemIdx" -> true   (mandatory setup items)
+    notes: {},             // sectionIdx -> {text, audience}   (section-level call notes)
+    customItems: {},       // sectionIdx -> [{id, text, checked, feasibilityNote, noteAudience, link}]
+    itemOverrides: {},     // "sectionIdx-itemIdx" -> edited wording for a mandatory item
+    hiddenItems: {},       // "sectionIdx-itemIdx" -> true if hidden
+    hiddenSections: {},    // sectionIdx -> true if the whole section is hidden
+    itemNotes: {},         // "sectionIdx-itemIdx" -> {text, audience}   (per-item notes on mandatory steps)
+    internalNotes: {},     // "sectionIdx-itemIdx" or "custom-<id>" -> string   (private, never exported to PDF)
+    dates: {}              // "sectionIdx-itemIdx" or "custom-<id>" -> {expected, done}  (YYYY-MM-DD)
+  };
+}
+
+// A note's audience is "internal" (default, never shown outside this tool)
+// or "customer" (included in the PDF leave-behind). Always coerce to one
+// of exactly these two values so a typo or stale value can't accidentally
+// make something customer-facing.
+function normAudience(a){
+  return a === "customer" ? "customer" : "internal";
+}
+
+function normNote(n){
+  if(!n) return null;
+  if(typeof n === "string"){
+    return n ? { text: n, audience: "internal" } : null;
+  }
+  const text = n.text || "";
+  return text ? { text, audience: normAudience(n.audience) } : null;
+}
+
+function normalizeState(s){
+  s = s || {};
+  if(typeof s.name !== "string") s.name = s.name || "";
+  if(!s.checked) s.checked = {};
+  if(!s.notes) s.notes = {};
+  if(!s.customItems) s.customItems = {};
+  if(!s.itemOverrides) s.itemOverrides = {};
+  if(!s.hiddenItems) s.hiddenItems = {};
+  if(!s.hiddenSections) s.hiddenSections = {};
+  if(!s.itemNotes) s.itemNotes = {};
+  if(!s.internalNotes) s.internalNotes = {};
+  if(!s.dates) s.dates = {};
+  Object.keys(s.dates).forEach(k=>{
+    const d = s.dates[k] || {};
+    const o = {};
+    if(isDateStr(d.expected)) o.expected = d.expected;
+    if(isDateStr(d.done)) o.done = d.done;
+    if(o.expected || o.done) s.dates[k] = o; else delete s.dates[k];
+  });
+  Object.keys(s.internalNotes).forEach(k=>{
+    const v = typeof s.internalNotes[k] === "string" ? s.internalNotes[k].trim() : "";
+    if(v) s.internalNotes[k] = v; else delete s.internalNotes[k];
+  });
+  Object.keys(s.notes).forEach(k=>{
+    const n = normNote(s.notes[k]);
+    if(n) s.notes[k] = n; else delete s.notes[k];
+  });
+  Object.keys(s.itemNotes).forEach(k=>{
+    const n = normNote(s.itemNotes[k]);
+    if(n) s.itemNotes[k] = n; else delete s.itemNotes[k];
+  });
+  Object.keys(s.customItems).forEach(k=>{
+    s.customItems[k] = (s.customItems[k] || []).map(ci=>({
+      id: ci.id,
+      text: ci.text,
+      checked: !!ci.checked,
+      feasible: ci.feasible || "unknown",
+      feasibilityNote: ci.feasibilityNote || "",
+      noteAudience: normAudience(ci.noteAudience),
+      link: ci.link ? cleanUrl(ci.link) : ""
+    }));
+  });
+  return s;
+}
+
+function itemText(sIdx, iIdx){
+  const key = sIdx + "-" + iIdx;
+  return state.itemOverrides[key] || DATA[sIdx].items[iIdx].t;
+}
+
+function loadState(key){
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return null;
+    return normalizeState(JSON.parse(raw));
+  }catch(e){ return null; }
+}
+
+function saveState(key, state){
+  try{
+    localStorage.setItem(key, JSON.stringify(state));
+  }catch(e){}
+  scheduleVaultSync();
+  renderCustList();
+}
+
+let state = null;
+
+function buildCustRows(){
+  const rows = [];
+  listLocalCustomers().forEach(c=> rows.push({ id:c.id, name:c.name, key:c.key }));
+  const known = new Set(rows.map(r=>r.id));
+  vaultFiles.forEach(f=>{
+    const id = f.name.replace(/\.md$/i, "");
+    if(!known.has(id)){
+      rows.push({ id, name:f.displayName, key:"vaultfile:"+encodeURIComponent(f.name) });
+    }
+  });
+  rows.sort((a,b)=>a.name.localeCompare(b.name));
+  return rows;
+}
+
+function renderCustList(){
+  const panel = document.getElementById("custListPanel");
+  const toggleLabel = document.getElementById("custListToggleLabel");
+  if(!panel || !toggleLabel) return;
+  const rows = buildCustRows();
+  const activeId = currentKey ? slugOfKey(currentKey) : null;
+
+  let html = `<div class="cust-list-row${!activeId ? " active" : ""}" data-action="new"><span class="cust-list-row-name">— new —</span></div>`;
+  html += rows.map(r=>{
+    const isActive = r.id === activeId;
+    return `<div class="cust-list-row${isActive ? " active" : ""}" data-key="${escapeHtml(r.key)}">
+      <span class="cust-list-row-name">${escapeHtml(r.name)}</span>
+      <button type="button" class="cust-list-row-x" data-del="${escapeHtml(r.key)}" data-name="${escapeHtml(r.name)}" title="Delete">&times;</button>
+    </div>`;
+  }).join("");
+  panel.innerHTML = html;
+
+  const activeRow = rows.find(r=>r.id===activeId);
+  toggleLabel.textContent = activeRow ? activeRow.name : "— new —";
+
+  panel.querySelectorAll(".cust-list-row").forEach(row=>{
+    row.addEventListener("click", async (e)=>{
+      if(e.target.closest(".cust-list-row-x")) return;
+      panel.classList.remove("open");
+      if(row.dataset.action === "new"){ await switchToCustomer(null, ""); return; }
+      await switchToKey(row.dataset.key);
+    });
+  });
+  panel.querySelectorAll(".cust-list-row-x").forEach(btn=>{
+    btn.addEventListener("click", async (e)=>{
+      e.stopPropagation();
+      await deleteCustomerByKey(btn.dataset.del, btn.dataset.name);
+    });
+  });
+  updatePersistBanner();
+}
+
+async function switchToKey(key){
+  if(!key){ await switchToCustomer(null, ""); return; }
+  openSections = new Set([0]);
+  if(key.indexOf("vaultfile:")===0){
+    const fname = decodeURIComponent(key.slice("vaultfile:".length));
+    const entry = vaultFiles.find(f => f.name === fname);
+    if(!entry) return;
+    try{
+      const file = await entry.handle.getFile();
+      const text = await file.text();
+      const parsed = parseMarkdown(text);
+      state = normalizeState({ name: parsed.name || entry.displayName, checked: parsed.checked, notes: parsed.notes, customItems: parsed.customItems, itemOverrides: parsed.itemOverrides, hiddenItems: parsed.hiddenItems, hiddenSections: parsed.hiddenSections, itemNotes: parsed.itemNotes, internalNotes: parsed.internalNotes, dates: parsed.dates });
+      currentKey = STORAGE_PREFIX + slug(state.name);
+      document.getElementById("custName").value = state.name || "";
+      saveState(currentKey, state);
+      render();
+      renderCustList();
+    }catch(err){
+      showToast("Couldn't read that vault file");
+    }
+    return;
+  }
+  const id = slugOfKey(key);
+  const loaded = loadState(key);
+  if(loaded){
+    currentKey = STORAGE_PREFIX + id;
+    state = loaded;
+    document.getElementById("custName").value = state.name || "";
+    render();
+    renderCustList();
+  }
+}
+
+async function deleteCustomerByKey(key, name){
+  if(!confirm(`Delete the entire "${name || "this checklist"}" checklist? This removes it from your saved list everywhere and cannot be undone.`)) return;
+  const id = slugOfKey(key);
+
+  try{ localStorage.removeItem(STORAGE_PREFIX + id); }catch(e){}
+
+  const fname = id ? id + ".md" : "";
+  if(vaultDirHandle && fname){
+    try{
+      await vaultDirHandle.getFileHandle(fname); // throws if it isn't there
+      if(confirm(`Also delete the synced vault file "${fname}" from your connected folder?`)){
+        await vaultDirHandle.removeEntry(fname);
+        await refreshVaultFileList();
+      }
+    }catch(e){ /* no matching vault file — nothing more to do */ }
+  }
+
+  showToast(`Deleted "${name || id}"`);
+
+  if(currentKey && slugOfKey(currentKey) === id){
+    const rows = buildCustRows();
+    if(rows.length){ await switchToKey(rows[0].key); }
+    else { await switchToCustomer(null, ""); }
+  } else {
+    renderCustList();
+  }
+}
+
+function escapeHtml(s){
+  return (s||"").replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// Strips trailing characters that are almost never actually part of a URL
+// but very often end up tacked on because the URL sat at the end of a
+// sentence (a period, a comma, a closing paren with no matching open one,
+// etc). Returns {url, trailing} so callers can put the punctuation back
+// outside the link.
+function stripTrailingPunct(raw){
+  let url = raw;
+  let trailing = "";
+  while(url.length && /[.,;:!?)\]>]$/.test(url)){
+    const ch = url.slice(-1);
+    if(ch === ")" ){
+      const opens = (url.match(/\(/g)||[]).length;
+      const closes = (url.match(/\)/g)||[]).length;
+      if(closes <= opens) break; // this ')' is balanced, likely part of the URL
+    }
+    trailing = ch + trailing;
+    url = url.slice(0, -1);
+  }
+  return { url, trailing };
+}
+
+function cleanUrl(raw){
+  return stripTrailingPunct((raw||"").trim()).url;
+}
+
+function linkifyHtml(text){
+  const escaped = escapeHtml(text);
+  const re = /(https?:\/\/[^\s<]+)|((?:www\.)?(?:docs\.|support\.)?checkmarx\.com\/[^\s<]+)/gi;
+  return escaped.replace(re, (match, full, bare)=>{
+    const { url, trailing } = stripTrailingPunct(full || bare);
+    const href = full ? url : "https://" + url;
+    return `<a href="${href}" target="_blank" rel="noopener" class="item-link">${url}</a>${trailing}`;
+  });
+}
+
+function feasLabel(f){
+  return f === "yes" ? "Supported" : f === "no" ? "Not supported" : "Needs verification";
+}
+
+function audLabel(aud){
+  return aud === "customer" ? "👁 Customer-facing" : "🔒 Internal only";
+}
+
+// Generic collapsed-note-with-audience-toggle UI, shared by section notes
+// and per-item notes on mandatory steps. Custom (customer requirement)
+// items use their own variant below since they also carry a doc link.
+function noteBlockHtml(note, placeholder){
+  const text = note ? note.text : "";
+  const aud = normAudience(note ? note.audience : "internal");
+  return `
+    <div class="item-note-block">
+      <div class="item-note-row">
+        <button type="button" class="note-toggle">${text ? "Edit note" : "+ Add note"}</button>
+        ${text ? `<button type="button" class="audience-toggle aud-${aud}">${audLabel(aud)}</button>` : ""}
+      </div>
+      ${text ? `<div class="item-note-text">${linkifyHtml(text)}</div>` : ""}
+      <div class="item-note-form" style="display:none;">
+        <textarea class="item-note-input" placeholder="${placeholder}">${escapeHtml(text)}</textarea>
+        <div class="item-note-form-row">
+          <button type="button" class="audience-toggle-edit aud-${aud}">${audLabel(aud)}</button>
+          <button type="button" class="btn primary item-note-save">Save</button>
+          <button type="button" class="btn item-note-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// container: the element noteBlockHtml's markup was inserted into.
+// getNote(): returns the current {text, audience} or null.
+// setNote(n): called with the new {text, audience} or null (null = cleared).
+// onSaved(): called after a change that should persist + re-render.
+function wireNoteBlock(container, getNote, setNote, onSaved){
+  const block = container.querySelector(".item-note-block");
+  if(!block) return;
+  let draftAud = normAudience(getNote() ? getNote().audience : "internal");
+  const form = block.querySelector(".item-note-form");
+
+  block.querySelector(".note-toggle").addEventListener("click", ()=>{
+    form.style.display = form.style.display === "none" ? "flex" : "none";
+  });
+
+  const quickBadge = block.querySelector(".item-note-row .audience-toggle");
+  if(quickBadge){
+    quickBadge.addEventListener("click", ()=>{
+      const n = getNote();
+      if(!n) return;
+      n.audience = n.audience === "customer" ? "internal" : "customer";
+      setNote(n);
+      onSaved();
+    });
+  }
+
+  const editBtn = block.querySelector(".audience-toggle-edit");
+  editBtn.addEventListener("click", ()=>{
+    draftAud = draftAud === "customer" ? "internal" : "customer";
+    editBtn.className = "audience-toggle-edit aud-" + draftAud;
+    editBtn.textContent = audLabel(draftAud);
+  });
+
+  block.querySelector(".item-note-save").addEventListener("click", ()=>{
+    const val = block.querySelector(".item-note-input").value.trim();
+    setNote(val ? { text: val, audience: draftAud } : null);
+    onSaved();
+  });
+
+  block.querySelector(".item-note-cancel").addEventListener("click", ()=>{
+    form.style.display = "none";
+  });
+}
+
+/* ---------------- Dates ---------------- */
+
+// All dates are stored as local calendar days (YYYY-MM-DD), never UTC, so a
+// date picked or stamped in the evening never rolls over to tomorrow.
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function isDateStr(v){
+  if(typeof v !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  const [y,m,d] = v.split("-").map(Number);
+  const dt = new Date(y, m-1, d);
+  return dt.getFullYear() === y && dt.getMonth() === m-1 && dt.getDate() === d;
+}
+function fmtDate(v){
+  const [y,m,d] = v.split("-").map(Number);
+  return new Date(y, m-1, d).toLocaleDateString(undefined, { month:"short", day:"numeric", year:"numeric" });
+}
+function setItemDate(key, field, val){
+  const cur = Object.assign({}, state.dates[key] || {});
+  if(val) cur[field] = val; else delete cur[field];
+  if(cur.expected || cur.done) state.dates[key] = cur; else delete state.dates[key];
+}
+// Stamp (or clear) the completion date when an item's checkbox changes.
+function stampDone(key, isChecked){
+  setItemDate(key, "done", isChecked ? todayStr() : "");
+}
+// Text shown for an item in the PDF, or "" when there is nothing to show.
+function pdfDateText(dates, key, isChecked){
+  const d = (dates && dates[key]) || {};
+  if(isChecked && d.done) return "Completed " + fmtDate(d.done);
+  if(!isChecked && d.expected) return "Expected " + fmtDate(d.expected);
+  return "";
+}
+
+// Calendar chips for one item: "Expected" (always) and "Done" (once checked).
+// Clicking a chip opens the browser's native calendar. Returns a refresh()
+// function the checkbox handler calls after changing the done date.
+function mountDates(host, key, isChecked){
+  function chipHtml(field, label, value, cls){
+    return `<span class="date-chip" data-field="${field}">
+      <button type="button" class="date-btn ${cls}">&#128197; ${label}</button>
+      ${value ? `<button type="button" class="date-clear" title="Clear this date">&times;</button>` : ""}
+      <input type="date" value="${value || ""}" aria-label="${field} date">
+    </span>`;
+  }
+  function draw(){
+    const d = state.dates[key] || {};
+    const checked = isChecked();
+    const overdue = !!d.expected && !checked && d.expected < todayStr();
+    let html = chipHtml(
+      "expected",
+      d.expected ? "Expected " + fmtDate(d.expected) + (overdue ? " (overdue)" : "") : "Set expected date",
+      d.expected,
+      d.expected ? (overdue ? "overdue" : "has-value") : ""
+    );
+    if(checked){
+      html += chipHtml("done", d.done ? "Done " + fmtDate(d.done) : "Set done date", d.done, "done-date");
+    }
+    host.innerHTML = html;
+    host.querySelectorAll(".date-chip").forEach(chip=>{
+      const field = chip.dataset.field;
+      const input = chip.querySelector("input");
+      chip.querySelector(".date-btn").addEventListener("click", ()=>{
+        try{
+          if(typeof input.showPicker === "function"){ input.showPicker(); return; }
+        }catch(e){}
+        // Fallback for browsers without showPicker(): show the input itself.
+        input.classList.add("visible");
+        input.focus();
+      });
+      input.addEventListener("change", ()=>{
+        setItemDate(key, field, isDateStr(input.value) ? input.value : "");
+        saveState(currentKey, state);
+        draw();
+      });
+      const clr = chip.querySelector(".date-clear");
+      if(clr){
+        clr.addEventListener("click", ()=>{
+          setItemDate(key, field, "");
+          saveState(currentKey, state);
+          draw();
+        });
+      }
+    });
+  }
+  draw();
+  return draw;
+}
+
+// Private "Internal notes" field for a single item. key is "sIdx-iIdx" for
+// default items or "custom-<id>" for customer requirements. Edits in place
+// (no full re-render) and saves into state.internalNotes. Internal notes are
+// never read by the PDF export.
+function mountInternalNote(host, key){
+  if(!host) return;
+  function draw(editing){
+    const text = state.internalNotes[key] || "";
+    if(editing){
+      host.innerHTML = `
+        <div class="int-note-form">
+          <div class="int-note-label">&#128274; Internal notes (never included in the PDF)</div>
+          <textarea placeholder="Private notes for you and your team..."></textarea>
+          <div class="int-note-form-row">
+            <button type="button" class="btn primary int-note-save">Save</button>
+            <button type="button" class="btn int-note-cancel">Cancel</button>
+            ${text ? `<button type="button" class="btn int-note-clear">Clear</button>` : ""}
+          </div>
+        </div>`;
+      const ta = host.querySelector("textarea");
+      ta.value = text;
+      ta.focus();
+      ta.setSelectionRange(ta.value.length, ta.value.length);
+      const save = ()=>{
+        const val = ta.value.trim();
+        if(val){ state.internalNotes[key] = val; } else { delete state.internalNotes[key]; }
+        saveState(currentKey, state);
+        draw(false);
+      };
+      host.querySelector(".int-note-save").addEventListener("click", save);
+      host.querySelector(".int-note-cancel").addEventListener("click", ()=> draw(false));
+      const clr = host.querySelector(".int-note-clear");
+      if(clr){
+        clr.addEventListener("click", ()=>{
+          delete state.internalNotes[key];
+          saveState(currentKey, state);
+          draw(false);
+        });
+      }
+      ta.addEventListener("keydown", (e)=>{
+        if(e.key === "Escape"){ e.preventDefault(); draw(false); }
+        else if(e.key === "Enter" && (e.metaKey || e.ctrlKey)){ e.preventDefault(); save(); }
+      });
+    } else if(text){
+      host.innerHTML = `
+        <div class="int-note-view" role="button" tabindex="0" title="Click to edit">
+          <div class="int-note-label">&#128274; Internal notes</div>
+          <div class="int-note-text">${linkifyHtml(text)}</div>
+        </div>`;
+      const view = host.querySelector(".int-note-view");
+      view.addEventListener("click", (e)=>{
+        if(e.target.closest("a")) return;   // let links open normally
+        draw(true);
+      });
+      view.addEventListener("keydown", (e)=>{
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); draw(true); }
+      });
+    } else {
+      host.innerHTML = `<button type="button" class="int-note-add">+ Internal notes</button>`;
+      host.querySelector(".int-note-add").addEventListener("click", ()=> draw(true));
+    }
+  }
+  draw(false);
+}
+
+function linkHostLabel(url){
+  try{
+    const u = new URL(url);
+    return u.hostname.replace(/^www\./, "");
+  }catch(e){
+    return "source";
+  }
+}
+
+function totalItemCount(){
+  return DATA.reduce((n,s)=>n+s.items.length,0);
+}
+
+function sectionCounts(sIdx){
+  const section = DATA[sIdx];
+  const visibleIdx = section.items.map((_, iIdx)=>iIdx).filter(iIdx => !state.hiddenItems[sIdx+"-"+iIdx]);
+  const mandatoryTotal = visibleIdx.length;
+  const mandatoryDone = visibleIdx.filter(iIdx => state.checked[sIdx+"-"+iIdx]).length;
+  const customList = state.customItems[sIdx] || [];
+  const customTotal = customList.length;
+  const customDone = customList.filter(c=>c.checked).length;
+  const doneCount = mandatoryDone + customDone;
+  const totalCount = mandatoryTotal + customTotal;
+  return {
+    mandatoryDone, mandatoryTotal, customDone, customTotal,
+    doneCount, totalCount, customList,
+    complete: totalCount > 0 && doneCount === totalCount
+  };
+}
+
+function newCustomItemId(){
+  return Math.random().toString(36).slice(2,8);
+}
+
+/* ---------------- Vault folder (File System Access API) ---------------- */
+
+let vaultDirHandle = null;     // connected FileSystemDirectoryHandle, or null
+let vaultPendingHandle = null; // remembered handle awaiting permission
+let vaultFiles = [];           // [{name, handle, displayName}]
+let vaultSyncTimer = null;
+
+function supportsFSAccess(){
+  return typeof window.showDirectoryPicker === "function";
+}
+
+const IDB_NAME = "cxone_onboarding_fs";
+const IDB_STORE = "handles";
+function idbOpen(){
+  return new Promise((resolve, reject)=>{
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = ()=>{ req.result.createObjectStore(IDB_STORE); };
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+async function idbSet(key, val){
+  const db = await idbOpen();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction(IDB_STORE, "readwrite");
+    tx.objectStore(IDB_STORE).put(val, key);
+    tx.oncomplete = ()=>resolve();
+    tx.onerror = ()=>reject(tx.error);
+  });
+}
+async function idbGet(key){
+  const db = await idbOpen();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction(IDB_STORE, "readonly");
+    const req = tx.objectStore(IDB_STORE).get(key);
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+
+function updateVaultStatus(){
+  const el = document.getElementById("vaultStatus");
+  const btn = document.getElementById("vaultConnectBtn");
+  if(!supportsFSAccess()){
+    el.textContent = "Folder linking needs Chrome or Edge — use Save/Load Markdown instead";
+    btn.style.display = "none";
+  } else {
+    btn.style.display = "";
+    if(vaultDirHandle){
+      el.textContent = "Vault folder connected — every change writes straight to its Markdown file";
+      btn.textContent = "Change folder…";
+    } else if(vaultPendingHandle){
+      el.textContent = "Vault folder needs to be reconnected";
+      btn.textContent = "Reconnect folder…";
+    } else {
+      el.textContent = "No vault folder connected yet";
+      btn.textContent = "Connect folder…";
+    }
+  }
+  updatePersistBanner();
+}
+
+// The Markdown files in a connected vault folder are the source of truth
+// for this tool — nothing here is meant to live only in browser storage.
+// This banner makes that unmissable when no folder is connected yet, or
+// when a previously-connected folder's permission has lapsed.
+function updatePersistBanner(){
+  const el = document.getElementById("persistBanner");
+  if(!el) return;
+  if(vaultDirHandle){
+    el.className = "persist-banner ok";
+    el.style.display = "flex";
+    el.innerHTML = `<span>✓ Saving to your vault folder as Markdown. Browser storage is just a local cache.</span>`;
+    return;
+  }
+  if(!supportsFSAccess()){
+    el.className = "persist-banner warn";
+    el.style.display = "flex";
+    el.innerHTML = `<span>⚠ No vault folder support in this browser — changes stay in this browser tab until you click <strong>Save Markdown</strong>.</span>`;
+    return;
+  }
+  el.className = "persist-banner warn";
+  el.style.display = "flex";
+  el.innerHTML = `<span>⚠ No vault folder connected — changes are only kept in this browser tab, not written to any Markdown file.</span><button type="button" id="persistBannerBtn">${vaultPendingHandle ? "Reconnect folder…" : "Connect folder…"}</button>`;
+  const btn = document.getElementById("persistBannerBtn");
+  if(btn) btn.addEventListener("click", connectVaultFolder);
+}
+
+async function tryRestoreVault(){
+  if(!supportsFSAccess()){ updateVaultStatus(); return; }
+  try{
+    const handle = await idbGet("dir");
+    if(handle){
+      const perm = await handle.queryPermission({ mode: "readwrite" });
+      if(perm === "granted"){
+        vaultDirHandle = handle;
+        await syncAllToVault();
+      } else {
+        vaultPendingHandle = handle;
+      }
+    }
+  }catch(e){ /* ignore, treat as not connected */ }
+  updateVaultStatus();
+}
+
+async function connectVaultFolder(){
+  if(!supportsFSAccess()) return;
+  try{
+    let handle = null;
+    if(vaultPendingHandle){
+      const perm = await vaultPendingHandle.requestPermission({ mode: "readwrite" });
+      if(perm === "granted") handle = vaultPendingHandle;
+    }
+    if(!handle){
+      handle = await window.showDirectoryPicker({ mode: "readwrite" });
+    }
+    vaultDirHandle = handle;
+    vaultPendingHandle = null;
+    await idbSet("dir", handle);
+    updateVaultStatus();
+    await syncAllToVault();
+    showToast("Vault folder connected — every saved customer copied in");
+  }catch(e){
+    showToast("Couldn't connect that folder");
+  }
+}
+
+async function refreshVaultFileList(){
+  vaultFiles = [];
+  if(vaultDirHandle){
+    try{
+      for await (const [name, handle] of vaultDirHandle.entries()){
+        if(handle.kind === "file" && /\.md$/i.test(name)){
+          let displayName = name.replace(/\.md$/i, "");
+          try{
+            const file = await handle.getFile();
+            const text = await file.text();
+            const parsed = parseMarkdown(text);
+            if(parsed.name) displayName = parsed.name;
+          }catch(e){}
+          vaultFiles.push({ name, handle, displayName });
+        }
+      }
+    }catch(e){}
+  }
+  vaultFiles.sort((a,b)=>a.displayName.localeCompare(b.displayName));
+  renderCustList();
+}
+
+async function writeVaultFile(filename, text){
+  const fh = await vaultDirHandle.getFileHandle(filename, { create: true });
+  const writable = await fh.createWritable();
+  await writable.write(text);
+  await writable.close();
+}
+
+function scheduleVaultSync(){
+  if(!vaultDirHandle) return;
+  clearTimeout(vaultSyncTimer);
+  vaultSyncTimer = setTimeout(()=>{ syncToVaultNow().catch(()=>{}); }, 600);
+}
+
+async function syncToVaultNow(){
+  if(!vaultDirHandle) return;
+  const fname = slug(state.name || "untitled") + ".md";
+  await writeVaultFile(fname, buildMarkdown());
+  await refreshVaultFileList();
+}
+
+// Mirrors every customer currently in localStorage into the connected
+// vault folder — not just whichever one is currently open. Run this
+// whenever the vault folder is (re)connected, so a OneDrive (or any
+// synced) folder ends up with the full roster, not just whatever you
+// happen to click into next.
+async function syncAllToVault(){
+  if(!vaultDirHandle) return;
+  let entries = [];
+  listLocalCustomers().forEach(c=>{
+    const st = loadState(c.key);
+    if(st) entries.push({ id: c.id, st });
+  });
+  for(const e of entries){
+    try{
+      const fname = (e.id || slug(e.st.name || "untitled")) + ".md";
+      await writeVaultFile(fname, buildMarkdown(e.st));
+    }catch(err){ /* skip one bad entry rather than abort the whole batch */ }
+  }
+  await refreshVaultFileList();
+}
+
+/* ---------------- Markdown build / parse ---------------- */
+
+// Emits a "> **Label:** text" blockquote under an item. Extra lines of a
+// multi-line note become indented "> " continuation lines so they round-trip.
+function pushQuoted(lines, label, text){
+  const parts = String(text).split(/\r?\n/);
+  lines.push(`  > **${label}:** ${parts[0]}`);
+  for(let k=1;k<parts.length;k++) lines.push(`  > ${parts[k]}`);
+}
+
+function buildMarkdown(st){
+  st = st || state;
+  const lines = [];
+  const name = st.name || "Unnamed customer";
+  lines.push("---");
+  lines.push(`customer: ${name}`);
+  lines.push(`updated: ${new Date().toISOString()}`);
+  lines.push("tool: cxone-onboarding-checklist");
+  lines.push("---");
+  lines.push("");
+  lines.push(`# Checkmarx One Onboarding — ${name}`);
+  lines.push("");
+  DATA.forEach((section, sIdx)=>{
+    const sectionHiddenTok = (st.hiddenSections && st.hiddenSections[sIdx]) ? " <!-- hidden:true -->" : "";
+    lines.push(`## ${sIdx}. ${section.title}${sectionHiddenTok}`);
+    lines.push("");
+    section.items.forEach((item, iIdx)=>{
+      const key = sIdx + "-" + iIdx;
+      const mark = st.checked[key] ? "x" : " ";
+      const text = (st.itemOverrides && st.itemOverrides[key]) || item.t;
+      const hiddenTok = (st.hiddenItems && st.hiddenItems[key]) ? " hidden:true" : "";
+      const dt = (st.dates && st.dates[key]) || {};
+      const dateTok = (dt.expected ? ` expected:${dt.expected}` : "") + (dt.done ? ` done:${dt.done}` : "");
+      lines.push(`- [${mark}] ${text} <!-- item:${key}${dateTok}${hiddenTok} -->`);
+      const n = st.itemNotes && st.itemNotes[key];
+      if(n && n.text){
+        const aud = n.audience === "customer" ? "Customer-facing" : "Internal";
+        pushQuoted(lines, `Note (${aud})`, n.text);
+      }
+      if(st.internalNotes && st.internalNotes[key]){
+        pushQuoted(lines, "Internal Notes", st.internalNotes[key]);
+      }
+    });
+    (st.customItems[sIdx] || []).forEach(ci=>{
+      const mark = ci.checked ? "x" : " ";
+      const feas = ci.feasible || "unknown";
+      const linkTok = ci.link ? ` link:${ci.link}` : "";
+      const cdt = (st.dates && st.dates["custom-" + ci.id]) || {};
+      const cDateTok = (cdt.expected ? ` expected:${cdt.expected}` : "") + (cdt.done ? ` done:${cdt.done}` : "");
+      lines.push(`- [${mark}] ${ci.text} <!-- item:custom-${ci.id} feasible:${feas}${linkTok}${cDateTok} -->`);
+      if(ci.feasibilityNote){
+        const aud = ci.noteAudience === "customer" ? "Customer-facing" : "Internal";
+        pushQuoted(lines, `Note (${aud})`, ci.feasibilityNote);
+      }
+      if(st.internalNotes && st.internalNotes["custom-" + ci.id]){
+        pushQuoted(lines, "Internal Notes", st.internalNotes["custom-" + ci.id]);
+      }
+    });
+    if(st.notes[sIdx] && st.notes[sIdx].text){
+      lines.push("");
+      const aud = st.notes[sIdx].audience === "customer" ? "Customer-facing" : "Internal";
+      const noteLines = String(st.notes[sIdx].text).split(/\r?\n/);
+      lines.push(`> **Notes (${aud}):** ${noteLines[0]}`);
+      for(let k=1;k<noteLines.length;k++){
+        lines.push(`> ${noteLines[k]}`);
+      }
+    }
+    lines.push("");
+  });
+  return lines.join("\n");
+}
+
+function parseMarkdown(text){
+  const lines = text.split(/\r?\n/);
+  let i = 0;
+  let name = "";
+
+  if(lines[0] && lines[0].trim() === "---"){
+    i = 1;
+    for(; i<lines.length; i++){
+      if(lines[i].trim() === "---"){ i++; break; }
+      const m = lines[i].match(/^customer:\s*(.*)$/);
+      if(m) name = m[1].trim();
+    }
+  }
+
+  const checked = {};
+  const customItems = {};
+  const notes = {};
+  const itemOverrides = {};
+  const hiddenItems = {};
+  const hiddenSections = {};
+  const itemNotes = {};
+  const internalNotes = {};
+  const dates = {};
+  let currentSection = null;
+  let collectingNotes = false;
+  let notesBuf = [];
+  let notesAudience = {};
+  // After a checkbox line, exactly one of these may be set so the very
+  // next line (if it's a Note line) can be attached to the right place.
+  let quoteTarget = null;        // {key, cust, ikey} for the checkbox line just read
+  let quoteField = null;         // "note" | "internal" while collecting continuation lines
+
+  function flushNotes(){
+    if(currentSection !== null && notesBuf.length){
+      notes[currentSection] = { text: notesBuf.join("\n").trim(), audience: notesAudience[currentSection] || "internal" };
+    }
+    notesBuf = [];
+    collectingNotes = false;
+  }
+
+  for(; i<lines.length; i++){
+    const line = lines[i];
+
+    const h = line.match(/^##\s+(\d+)\./);
+    if(h){
+      flushNotes();
+      quoteTarget = null; quoteField = null;
+      currentSection = parseInt(h[1], 10);
+      if(/<!--\s*hidden:true\s*-->/.test(line)){
+        hiddenSections[currentSection] = true;
+      }
+      continue;
+    }
+
+    const cb = line.match(/^- \[([ xX])\]\s(.*?)\s*<!--\s*(.*?)\s*-->/);
+    if(cb){
+      flushNotes();
+      quoteTarget = null; quoteField = null;
+      const doneMark = cb[1].toLowerCase() === "x";
+      const text = cb[2];
+      const tokens = cb[3].split(/\s+/);
+      const itemTok = tokens.find(t=>t.indexOf("item:")===0);
+      const feasTok = tokens.find(t=>t.indexOf("feasible:")===0);
+      const linkTok = tokens.find(t=>t.indexOf("link:")===0);
+      const hiddenTok = tokens.find(t=>t.indexOf("hidden:")===0);
+      const expTok = tokens.find(t=>t.indexOf("expected:")===0);
+      const doneTok = tokens.find(t=>t.indexOf("done:")===0);
+      const expVal = expTok ? expTok.slice(9) : "";
+      const doneVal = doneTok ? doneTok.slice(5) : "";
+      const dateObj = {};
+      if(isDateStr(expVal)) dateObj.expected = expVal;
+      if(isDateStr(doneVal)) dateObj.done = doneVal;
+      const marker = itemTok ? itemTok.slice(5) : "";
+      const feasible = feasTok ? feasTok.slice(9) : "unknown";
+      const link = linkTok ? cleanUrl(linkTok.slice(5)) : "";
+      const isHidden = hiddenTok ? hiddenTok.slice(7) === "true" : false;
+      const mNum = marker.match(/^(\d+)-(\d+)$/);
+      if(mNum){
+        const key = mNum[1]+"-"+mNum[2];
+        checked[key] = doneMark;
+        if(isHidden) hiddenItems[key] = true;
+        const sIdxNum = parseInt(mNum[1], 10);
+        const iIdxNum = parseInt(mNum[2], 10);
+        const defaultItem = DATA[sIdxNum] && DATA[sIdxNum].items[iIdxNum];
+        if(defaultItem && text !== defaultItem.t){
+          itemOverrides[key] = text;
+        }
+        if(dateObj.expected || dateObj.done) dates[key] = dateObj;
+        quoteTarget = { key, cust: null, ikey: key };
+      } else {
+        const mCustom = marker.match(/^custom-(.+)$/);
+        if(mCustom && currentSection !== null){
+          if(!customItems[currentSection]) customItems[currentSection] = [];
+          const newItem = { id: mCustom[1], text, checked: doneMark, feasible, feasibilityNote: "", noteAudience: "internal", link };
+          customItems[currentSection].push(newItem);
+          if(dateObj.expected || dateObj.done) dates["custom-" + mCustom[1]] = dateObj;
+          quoteTarget = { key: null, cust: newItem, ikey: "custom-" + mCustom[1] };
+        }
+      }
+      continue;
+    }
+
+    if(quoteTarget){
+      const t = quoteTarget;
+      const noteMatch = line.match(/^\s*>\s*\*\*Note\s*(?:\(([^)]*)\))?:\*\*\s?(.*)$/i);
+      if(noteMatch){
+        const aud = (noteMatch[1]||"").toLowerCase().indexOf("customer")===0 ? "customer" : "internal";
+        const txt = noteMatch[2].trim();
+        if(t.cust){ t.cust.feasibilityNote = txt; t.cust.noteAudience = aud; }
+        else if(t.key){ itemNotes[t.key] = { text: txt, audience: aud }; }
+        quoteField = "note";
+        continue;
+      }
+      const intMatch = line.match(/^\s*>\s*\*\*Internal Notes?:\*\*\s?(.*)$/i);
+      if(intMatch){
+        internalNotes[t.ikey] = intMatch[1].trim();
+        quoteField = "internal";
+        continue;
+      }
+      // Backward compat: older files tagged a custom item's note as
+      // "Feasibility" with no audience marker, treat as internal.
+      const legacyFeas = t.cust ? line.match(/^\s*>\s*\*\*Feasibility:\*\*\s?(.*)$/) : null;
+      if(legacyFeas){
+        t.cust.feasibilityNote = legacyFeas[1].trim();
+        t.cust.noteAudience = "internal";
+        quoteField = "note";
+        continue;
+      }
+      // Continuation line of a multi-line note (indented blockquote).
+      const cont = quoteField ? line.match(/^\s{2,}>\s?(.*)$/) : null;
+      if(cont){
+        if(quoteField === "internal"){
+          internalNotes[t.ikey] = (internalNotes[t.ikey] || "") + "\n" + cont[1];
+        } else if(t.cust){
+          t.cust.feasibilityNote = (t.cust.feasibilityNote || "") + "\n" + cont[1];
+        } else if(t.key && itemNotes[t.key]){
+          itemNotes[t.key].text += "\n" + cont[1];
+        }
+        continue;
+      }
+      quoteTarget = null; quoteField = null;
+    }
+
+    const noteStart = line.match(/^>\s*\*\*Notes\s*(?:\(([^)]*)\))?:\*\*\s?(.*)$/i);
+    if(noteStart){
+      collectingNotes = true;
+      notesAudience[currentSection] = (noteStart[1]||"").toLowerCase().indexOf("customer")===0 ? "customer" : "internal";
+      notesBuf = [noteStart[2]];
+      continue;
+    }
+
+    if(collectingNotes){
+      const cont = line.match(/^>\s?(.*)$/);
+      if(cont){
+        notesBuf.push(cont[1]);
+        continue;
+      } else {
+        flushNotes();
+      }
+    }
+  }
+  flushNotes();
+
+  return { name, checked, notes, customItems, itemOverrides, hiddenItems, hiddenSections, itemNotes, internalNotes, dates };
+}
+
+function render(){
+  const container = document.getElementById("sections");
+  container.innerHTML = "";
+
+  DATA.forEach((section, sIdx)=>{
+    if(state.hiddenSections[sIdx]){
+      const hiddenSecEl = document.createElement("div");
+      hiddenSecEl.className = "section section-hidden";
+      hiddenSecEl.innerHTML = `
+        <div class="section-head">
+          <div class="section-num">${sIdx}</div>
+          <div class="section-title">${escapeHtml(section.title)} <span class="hidden-tag">Hidden — doesn't apply to this customer</span></div>
+          <button type="button" class="btn restore-section-btn">Restore</button>
+        </div>
+      `;
+      hiddenSecEl.querySelector(".restore-section-btn").addEventListener("click", ()=>{
+        delete state.hiddenSections[sIdx];
+        saveState(currentKey, state);
+        render();
+        updateProgress();
+      });
+      container.appendChild(hiddenSecEl);
+      return;
+    }
+
+    const counts = sectionCounts(sIdx);
+    const complete = counts.complete;
+
+    const secEl = document.createElement("div");
+    secEl.className = "section" + (complete ? " complete" : "") + (openSections.has(sIdx) ? " open" : "");
+    secEl.dataset.idx = sIdx;
+
+    const countText = counts.customTotal
+      ? `${counts.mandatoryDone}/${counts.mandatoryTotal} · +${counts.customDone}/${counts.customTotal}`
+      : `${counts.mandatoryDone}/${counts.mandatoryTotal}`;
+
+    const head = document.createElement("div");
+    head.className = "section-head";
+    head.innerHTML = `
+      <div class="section-num">${complete ? "✓" : sIdx}</div>
+      <div class="section-title">${escapeHtml(section.title)}
+        <div class="section-sub">${escapeHtml(section.sub)}</div>
+      </div>
+      <div class="section-count">${countText}</div>
+      <button type="button" class="hide-section-btn" title="Hide this entire step — it won't count toward progress">⊘</button>
+      <div class="chevron"></div>
+    `;
+    head.addEventListener("click", ()=>{
+      const nowOpen = secEl.classList.toggle("open");
+      if(nowOpen){ openSections.add(sIdx); } else { openSections.delete(sIdx); }
+    });
+    head.querySelector(".hide-section-btn").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      state.hiddenSections[sIdx] = true;
+      saveState(currentKey, state);
+      render();
+      updateProgress();
+    });
+
+    const body = document.createElement("div");
+    body.className = "section-body";
+
+    const itemsWrap = document.createElement("div");
+    itemsWrap.className = "items";
+
+    section.items.forEach((item, iIdx)=>{
+      const key = sIdx+"-"+iIdx;
+
+      if(state.hiddenItems[key]){
+        const hiddenRow = document.createElement("div");
+        hiddenRow.className = "item item-hidden";
+        hiddenRow.innerHTML = `
+          <span class="hidden-label">Hidden: ${escapeHtml(itemText(sIdx, iIdx))}</span>
+          <button type="button" class="restore-btn">Restore</button>
+        `;
+        hiddenRow.querySelector(".restore-btn").addEventListener("click", ()=>{
+          delete state.hiddenItems[key];
+          saveState(currentKey, state);
+          render();
+          updateProgress();
+        });
+        itemsWrap.appendChild(hiddenRow);
+        return;
+      }
+
+      const checked = !!state.checked[key];
+      const text = itemText(sIdx, iIdx);
+      const isOverridden = text !== item.t;
+      const row = document.createElement("div");
+      row.className = "item" + (checked ? " done" : "");
+      const cbId = "cb-"+key;
+      row.innerHTML = `
+        <input type="checkbox" id="${cbId}" ${checked ? "checked":""}>
+        <div class="item-text">
+          <label for="${cbId}" class="item-label">${escapeHtml(text)}</label>
+          ${item.l ? `<br><a class="item-link" href="${item.l}" target="_blank" rel="noopener">docs.checkmarx.com ↗</a>` : ""}
+          <div class="date-row"></div>
+          <div class="item-edit-form" style="display:none;">
+            <input type="text" class="item-edit-input" value="${escapeHtml(text)}">
+            <button type="button" class="btn primary item-edit-save">Save</button>
+            <button type="button" class="btn item-edit-cancel">Cancel</button>
+            ${isOverridden ? `<button type="button" class="btn item-edit-reset">Reset to default wording</button>` : ""}
+          </div>
+          ${noteBlockHtml(state.itemNotes[key], "Internal reasoning, or a customer-safe note...")}
+          <div class="int-note"></div>
+        </div>
+        <div class="item-actions">
+          <button type="button" class="item-edit-btn" title="Edit wording">✎</button>
+          <button type="button" class="item-hide-btn" title="Hide — doesn't apply to this customer">⊘</button>
+        </div>
+      `;
+      mountInternalNote(row.querySelector(".int-note"), key);
+      const refreshDates = mountDates(row.querySelector(".date-row"), key, ()=> !!state.checked[key]);
+      const cb = row.querySelector("input");
+      cb.addEventListener("change", ()=>{
+        state.checked[key] = cb.checked;
+        stampDone(key, cb.checked);
+        refreshDates();
+        row.classList.toggle("done", cb.checked);
+        saveState(currentKey, state);
+        updateSectionHeader(secEl, section, sIdx);
+        updateProgress();
+      });
+      wireNoteBlock(
+        row,
+        ()=> state.itemNotes[key] || null,
+        (n)=>{ if(n){ state.itemNotes[key] = n; } else { delete state.itemNotes[key]; } },
+        ()=>{ saveState(currentKey, state); render(); }
+      );
+      const editForm = row.querySelector(".item-edit-form");
+      row.querySelector(".item-edit-btn").addEventListener("click", ()=>{
+        editForm.style.display = editForm.style.display === "none" ? "flex" : "none";
+      });
+      row.querySelector(".item-hide-btn").addEventListener("click", ()=>{
+        state.hiddenItems[key] = true;
+        saveState(currentKey, state);
+        render();
+        updateProgress();
+      });
+      row.querySelector(".item-edit-save").addEventListener("click", ()=>{
+        const val = row.querySelector(".item-edit-input").value.trim();
+        if(!val) return;
+        if(val === item.t){ delete state.itemOverrides[key]; }
+        else { state.itemOverrides[key] = val; }
+        saveState(currentKey, state);
+        render();
+      });
+      row.querySelector(".item-edit-cancel").addEventListener("click", ()=>{
+        editForm.style.display = "none";
+      });
+      const resetBtn = row.querySelector(".item-edit-reset");
+      if(resetBtn){
+        resetBtn.addEventListener("click", ()=>{
+          delete state.itemOverrides[key];
+          saveState(currentKey, state);
+          render();
+        });
+      }
+      itemsWrap.appendChild(row);
+    });
+
+    counts.customList.forEach(ci=>{
+      const feas = ci.feasible || "unknown";
+      const row = document.createElement("div");
+      row.className = "item custom-item" + (ci.checked ? " done" : "");
+      const cbId = "cb-custom-"+ci.id;
+      row.innerHTML = `
+        <input type="checkbox" id="${cbId}" ${ci.checked ? "checked":""}>
+        <div class="item-text">
+          <div class="custom-flag">Customer requirement</div>
+          <label for="${cbId}">${escapeHtml(ci.text)}</label>
+          ${ci.link ? `<br><a class="item-link" href="${escapeHtml(cleanUrl(ci.link))}" target="_blank" rel="noopener">${escapeHtml(linkHostLabel(ci.link))} ↗</a>` : ""}
+          <div class="date-row"></div>
+          <div class="custom-meta">
+            <button type="button" class="badge-feas feas-${feas}">${feasLabel(feas)}</button>
+            <button type="button" class="note-toggle">${(ci.feasibilityNote || ci.link) ? "Edit note" : "+ Add note"}</button>
+            ${ci.feasibilityNote ? `<button type="button" class="audience-toggle aud-${normAudience(ci.noteAudience)}">${audLabel(normAudience(ci.noteAudience))}</button>` : ""}
+          </div>
+          <div class="feas-note" style="${ci.feasibilityNote ? "" : "display:none;"}">${linkifyHtml(ci.feasibilityNote||"")}</div>
+          <div class="feas-note-form" style="display:none;">
+            <textarea class="feas-note-input" placeholder="Why (prose note)...">${escapeHtml(ci.feasibilityNote||"")}</textarea>
+            <input type="text" class="feas-link-input" placeholder="Doc link (https://...)" value="${escapeHtml(ci.link||"")}">
+            <div class="feas-note-form-row">
+              <button type="button" class="audience-toggle-edit aud-${normAudience(ci.noteAudience)}">${audLabel(normAudience(ci.noteAudience))}</button>
+              <button type="button" class="btn primary feas-note-save">Save</button>
+              <button type="button" class="btn feas-note-cancel">Cancel</button>
+            </div>
+          </div>
+          <div class="int-note"></div>
+        </div>
+        <button class="item-remove" type="button" title="Remove this requirement">&times;</button>
+      `;
+      mountInternalNote(row.querySelector(".int-note"), "custom-" + ci.id);
+      const refreshDates = mountDates(row.querySelector(".date-row"), "custom-" + ci.id, ()=> !!ci.checked);
+      const cb = row.querySelector("input");
+      cb.addEventListener("change", ()=>{
+        ci.checked = cb.checked;
+        stampDone("custom-" + ci.id, cb.checked);
+        refreshDates();
+        row.classList.toggle("done", cb.checked);
+        saveState(currentKey, state);
+        updateSectionHeader(secEl, section, sIdx);
+        updateProgress();
+      });
+      row.querySelector(".item-remove").addEventListener("click", ()=>{
+        state.customItems[sIdx] = (state.customItems[sIdx]||[]).filter(x=>x.id!==ci.id);
+        delete state.internalNotes["custom-" + ci.id];
+        delete state.dates["custom-" + ci.id];
+        saveState(currentKey, state);
+        render();
+      });
+      row.querySelector(".badge-feas").addEventListener("click", ()=>{
+        const order = ["unknown","yes","no"];
+        const idx = order.indexOf(ci.feasible || "unknown");
+        ci.feasible = order[(idx+1) % order.length];
+        saveState(currentKey, state);
+        render();
+      });
+      const noteForm = row.querySelector(".feas-note-form");
+      row.querySelector(".note-toggle").addEventListener("click", ()=>{
+        noteForm.style.display = noteForm.style.display === "none" ? "flex" : "none";
+      });
+      const quickAudBtn = row.querySelector(".custom-meta .audience-toggle");
+      if(quickAudBtn){
+        quickAudBtn.addEventListener("click", ()=>{
+          ci.noteAudience = ci.noteAudience === "customer" ? "internal" : "customer";
+          saveState(currentKey, state);
+          render();
+        });
+      }
+      let draftAud = normAudience(ci.noteAudience);
+      const audEditBtn = row.querySelector(".audience-toggle-edit");
+      audEditBtn.addEventListener("click", ()=>{
+        draftAud = draftAud === "customer" ? "internal" : "customer";
+        audEditBtn.className = "audience-toggle-edit aud-" + draftAud;
+        audEditBtn.textContent = audLabel(draftAud);
+      });
+      row.querySelector(".feas-note-save").addEventListener("click", ()=>{
+        ci.feasibilityNote = row.querySelector(".feas-note-input").value.trim();
+        ci.link = cleanUrl(row.querySelector(".feas-link-input").value);
+        ci.noteAudience = draftAud;
+        saveState(currentKey, state);
+        render();
+      });
+      row.querySelector(".feas-note-cancel").addEventListener("click", ()=>{
+        noteForm.style.display = "none";
+      });
+      itemsWrap.appendChild(row);
+    });
+
+    const addWrap = document.createElement("div");
+    addWrap.className = "add-req";
+    addWrap.innerHTML = `
+      <button class="add-req-btn" type="button">+ Add customer requirement</button>
+      <div class="add-req-form" style="display:none;">
+        <input type="text" class="add-req-input" placeholder="Describe the requirement...">
+        <button class="btn primary add-req-confirm" type="button">Add</button>
+        <button class="btn add-req-cancel" type="button">Cancel</button>
+      </div>
+    `;
+    const addBtn = addWrap.querySelector(".add-req-btn");
+    const addForm = addWrap.querySelector(".add-req-form");
+    const addInput = addWrap.querySelector(".add-req-input");
+    addBtn.addEventListener("click", ()=>{
+      addBtn.style.display = "none";
+      addForm.style.display = "flex";
+      addInput.focus();
+    });
+    addWrap.querySelector(".add-req-cancel").addEventListener("click", ()=>{
+      addForm.style.display = "none";
+      addBtn.style.display = "";
+      addInput.value = "";
+    });
+    function confirmAdd(){
+      const val = addInput.value.trim();
+      if(!val) return;
+      if(!state.customItems[sIdx]) state.customItems[sIdx] = [];
+      state.customItems[sIdx].push({ id: newCustomItemId(), text: val, checked: false, feasible: "unknown", feasibilityNote: "", link: "" });
+      saveState(currentKey, state);
+      render();
+    }
+    addWrap.querySelector(".add-req-confirm").addEventListener("click", confirmAdd);
+    addInput.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){ e.preventDefault(); confirmAdd(); }
+    });
+    itemsWrap.appendChild(addWrap);
+
+    const noteWrap = document.createElement("div");
+    noteWrap.className = "section-note";
+    noteWrap.innerHTML = `<label class="tiny">Section-level call notes</label>` +
+      noteBlockHtml(state.notes[sIdx], "Anything specific to this account for this step...");
+    wireNoteBlock(
+      noteWrap,
+      ()=> state.notes[sIdx] || null,
+      (n)=>{ if(n){ state.notes[sIdx] = n; } else { delete state.notes[sIdx]; } },
+      ()=>{ saveState(currentKey, state); render(); }
+    );
+
+    itemsWrap.appendChild(noteWrap);
+    body.appendChild(itemsWrap);
+    secEl.appendChild(head);
+    secEl.appendChild(body);
+    container.appendChild(secEl);
+  });
+
+  updateProgress();
+}
+
+function updateSectionHeader(secEl, section, sIdx){
+  const counts = sectionCounts(sIdx);
+  secEl.classList.toggle("complete", counts.complete);
+  secEl.querySelector(".section-num").textContent = counts.complete ? "✓" : sIdx;
+  secEl.querySelector(".section-count").textContent = counts.customTotal
+    ? `${counts.mandatoryDone}/${counts.mandatoryTotal} · +${counts.customDone}/${counts.customTotal}`
+    : `${counts.mandatoryDone}/${counts.mandatoryTotal}`;
+}
+
+function updateProgress(){
+  let totalMandatory = 0, doneMandatory = 0, totalCustom = 0, doneCustom = 0;
+  DATA.forEach((section, sIdx)=>{
+    if(state.hiddenSections[sIdx]) return;
+    const counts = sectionCounts(sIdx);
+    totalMandatory += counts.mandatoryTotal;
+    doneMandatory += counts.mandatoryDone;
+    totalCustom += counts.customTotal;
+    doneCustom += counts.customDone;
+  });
+  const total = totalMandatory + totalCustom;
+  const done = doneMandatory + doneCustom;
+  const pct = total ? Math.round((done/total)*100) : 0;
+  document.getElementById("progressNum").textContent = pct + "%";
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressLabel").textContent = done + " / " + total + " done";
+  const subEl = document.getElementById("progressSub");
+  if(subEl){
+    subEl.textContent = totalCustom
+      ? `Setup ${doneMandatory}/${totalMandatory} · Customer requirements ${doneCustom}/${totalCustom}`
+      : `Setup ${doneMandatory}/${totalMandatory}`;
+  }
+}
+
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(showToast._tm);
+  showToast._tm = setTimeout(()=> t.classList.remove("show"), 1800);
+}
+
+async function switchToCustomer(key, name){
+  openSections = new Set([0]);
+  if(key){
+    const id = slugOfKey(key);
+    const loaded = loadState(STORAGE_PREFIX + id);
+    state = loaded || defaultState(name);
+    currentKey = STORAGE_PREFIX + id;
+  } else {
+    const nm = name || "";
+    currentKey = STORAGE_PREFIX + (slug(nm) || ("untitled-"+Date.now()));
+    state = defaultState(nm);
+    saveState(currentKey, state);
+  }
+  document.getElementById("custName").value = state.name || "";
+  render();
+  renderCustList();
+}
+
+// SAFETY: internal notes must NEVER appear in the PDF. buildPdf works from a
+// copy of the state with internalNotes removed, so nothing inside it can read
+// them (any attempt to would throw rather than leak).
+function pdfSafeState(){
+  const copy = Object.assign({}, state);
+  delete copy.internalNotes;
+  return copy;
+}
+
+function buildPdf(){
+  const state = pdfSafeState();   // intentionally shadows the global state
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "letter" });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const marginL = 54, marginR = 54, contentW = pageW - marginL - marginR;
+  let y = 60;
+
+  const violet = [107, 52, 253];
+  const midnight = [20, 9, 32];
+  const dim = [120, 110, 140];
+  const doneColor = [30, 150, 110];
+  const orange = [242, 89, 41];
+  const accentArr = [107, 52, 253];
+  const unsupportedColor = [224, 56, 70];
+  function feasColorArr(f){ return f === "yes" ? doneColor : f === "no" ? unsupportedColor : dim; }
+
+  function ensureSpace(h){
+    if(y + h > pageH - 50){
+      doc.addPage();
+      y = 60;
+    }
+  }
+
+  // Title
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(17);
+  doc.setTextColor(...midnight);
+  doc.text("Checkmarx One — Onboarding Checklist", marginL, y);
+  y += 20;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(11);
+  doc.setTextColor(...dim);
+  doc.text((state.name || "Unnamed customer") + "  •  " + new Date().toLocaleDateString(), marginL, y);
+  y += 10;
+
+  // progress
+  let total = 0, done = 0, totalCustomAll = 0;
+  DATA.forEach((s, sIdx)=>{
+    if(state.hiddenSections[sIdx]) return;
+    const c = sectionCounts(sIdx);
+    total += c.totalCount;
+    done += c.doneCount;
+    totalCustomAll += c.customTotal;
+  });
+  y += 16;
+  doc.setDrawColor(...dim);
+  doc.setFillColor(235,230,245);
+  doc.roundedRect(marginL, y-10, contentW, 10, 3, 3, "F");
+  const pct = total ? done/total : 0;
+  doc.setFillColor(...violet);
+  doc.roundedRect(marginL, y-10, Math.max(6, contentW*pct), 10, 3, 3, "F");
+  doc.setFontSize(9.5);
+  doc.setTextColor(...dim);
+  doc.text(done + " / " + total + " steps complete", marginL, y+14);
+  y += 32;
+
+  DATA.forEach((section, sIdx)=>{
+    if(state.hiddenSections[sIdx]) return;
+    const counts = sectionCounts(sIdx);
+
+    ensureSpace(34);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12.5);
+    doc.setTextColor(...(counts.complete ? doneColor : midnight));
+    doc.text(`${sIdx}. ${section.title}`, marginL, y);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...dim);
+    const countStr = counts.customTotal
+      ? `${counts.mandatoryDone}/${counts.mandatoryTotal} · +${counts.customDone}/${counts.customTotal}`
+      : `${counts.mandatoryDone}/${counts.mandatoryTotal}`;
+    doc.text(countStr, pageW - marginR, y, { align: "right" });
+    y += 16;
+
+    section.items.forEach((item, iIdx)=>{
+      const key = sIdx + "-" + iIdx;
+      if(state.hiddenItems[key]) return;
+      const checked = !!state.checked[key];
+      const text = itemText(sIdx, iIdx);
+      const boxSize = 9;
+      const lines = doc.setFont("helvetica","normal").setFontSize(10.2).splitTextToSize(text, contentW - 20);
+      ensureSpace(lines.length * 13 + 6);
+
+      doc.setDrawColor(...(checked ? doneColor : dim));
+      if(checked){ doc.setFillColor(...doneColor); doc.roundedRect(marginL, y-8, boxSize, boxSize, 1.5, 1.5, "F"); }
+      else { doc.roundedRect(marginL, y-8, boxSize, boxSize, 1.5, 1.5, "S"); }
+
+      doc.setFont("helvetica","normal");
+      doc.setFontSize(10.2);
+      doc.setTextColor(checked ? 140 : 30, checked ? 140 : 25, checked ? 140 : 40);
+      doc.text(lines, marginL + 16, y);
+      y += lines.length * 13 + 4;
+
+      const dateLine = pdfDateText(state.dates, key, checked);
+      if(dateLine){
+        ensureSpace(12);
+        doc.setFont("helvetica","normal").setFontSize(8.5);
+        doc.setTextColor(...dim);
+        doc.text(dateLine, marginL + 16, y);
+        y += 12;
+      }
+
+      // Only a note explicitly marked customer-facing ever reaches the PDF.
+      const itemNote = state.itemNotes[key];
+      if(itemNote && itemNote.text && itemNote.audience === "customer"){
+        const noteLines = doc.setFont("helvetica","italic").setFontSize(9).splitTextToSize(itemNote.text, contentW - 20);
+        ensureSpace(noteLines.length * 12 + 4);
+        doc.setTextColor(...dim);
+        doc.text(noteLines, marginL + 16, y);
+        y += noteLines.length * 12 + 4;
+      }
+
+      // Documentation link for the step (clickable in the PDF)
+      if(item.l){
+        ensureSpace(15);
+        doc.setFont("helvetica","normal");
+        doc.setFontSize(8.5);
+        doc.setTextColor(...accentArr);
+        const stepLink = cleanUrl(item.l);
+        doc.textWithLink(stepLink, marginL + 16, y, { url: stepLink });
+        y += 15;
+      }
+    });
+
+    counts.customList.forEach(ci=>{
+      const checked = !!ci.checked;
+      const feas = ci.feasible || "unknown";
+      const boxSize = 9;
+      const lines = doc.setFont("helvetica","normal").setFontSize(10.2).splitTextToSize(ci.text, contentW - 20);
+      ensureSpace(lines.length * 13 + 24);
+
+      doc.setDrawColor(...(checked ? doneColor : dim));
+      if(checked){ doc.setFillColor(...doneColor); doc.roundedRect(marginL, y-8, boxSize, boxSize, 1.5, 1.5, "F"); }
+      else { doc.roundedRect(marginL, y-8, boxSize, boxSize, 1.5, 1.5, "S"); }
+
+      doc.setFont("helvetica","normal");
+      doc.setFontSize(10.2);
+      doc.setTextColor(checked ? 140 : 30, checked ? 140 : 25, checked ? 140 : 40);
+      doc.text(lines, marginL + 16, y);
+      y += lines.length * 13;
+
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(8);
+      doc.setTextColor(...feasColorArr(feas));
+      doc.text(feasLabel(feas).toUpperCase(), marginL + 16, y);
+      y += 11;
+
+      const cDateLine = pdfDateText(state.dates, "custom-" + ci.id, checked);
+      if(cDateLine){
+        ensureSpace(12);
+        doc.setFont("helvetica","normal").setFontSize(8.5);
+        doc.setTextColor(...dim);
+        doc.text(cDateLine, marginL + 16, y);
+        y += 11;
+      }
+
+      if(ci.feasibilityNote && ci.noteAudience === "customer"){
+        const noteLines = doc.setFont("helvetica","italic").setFontSize(8.5).splitTextToSize(ci.feasibilityNote, contentW - 20);
+        ensureSpace(noteLines.length * 11 + 4);
+        doc.setTextColor(...dim);
+        doc.text(noteLines, marginL + 16, y);
+        y += noteLines.length * 11 + 4;
+      }
+      if(ci.link){
+        ensureSpace(13);
+        doc.setFont("helvetica","normal");
+        doc.setFontSize(8.5);
+        doc.setTextColor(...accentArr);
+        const cleanedLink = cleanUrl(ci.link);
+        doc.textWithLink(cleanedLink, marginL + 16, y, { url: cleanedLink });
+        y += 13;
+      }
+      y += 4;
+    });
+
+    if(state.notes[sIdx] && state.notes[sIdx].text && state.notes[sIdx].audience === "customer"){
+      const noteLines = doc.setFont("helvetica","italic").setFontSize(9.5).splitTextToSize("Notes: " + state.notes[sIdx].text, contentW - 16);
+      ensureSpace(noteLines.length * 12 + 8);
+      doc.setTextColor(...dim);
+      doc.text(noteLines, marginL + 16, y);
+      y += noteLines.length * 12 + 6;
+    }
+
+    y += 10;
+  });
+
+  if(totalCustomAll > 0){
+    doc.addPage();
+    y = 60;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(15);
+    doc.setTextColor(...midnight);
+    doc.text("Customer requirements addressed", marginL, y);
+    y += 14;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...dim);
+    doc.text((state.name || "Unnamed customer") + " — specific asks captured and tracked during this POV", marginL, y);
+    y += 26;
+
+    DATA.forEach((section, sIdx)=>{
+      if(state.hiddenSections[sIdx]) return;
+      const list = state.customItems[sIdx] || [];
+      if(!list.length) return;
+      ensureSpace(20);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(...midnight);
+      doc.text(section.title, marginL, y);
+      y += 15;
+
+      list.forEach(ci=>{
+        const statusLabel = ci.checked ? "Done" : "Open";
+        const col = ci.checked ? doneColor : orange;
+        const feas = ci.feasible || "unknown";
+        const lines = doc.setFont("helvetica","normal").setFontSize(10).splitTextToSize(ci.text, contentW - 70);
+        ensureSpace(lines.length * 13 + 24);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8.5);
+        doc.setTextColor(...col);
+        doc.text(statusLabel.toUpperCase(), marginL + 10, y);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(30,25,40);
+        doc.text(lines, marginL + 52, y);
+        y += lines.length * 13 + 2;
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.setTextColor(...feasColorArr(feas));
+        doc.text(feasLabel(feas), marginL + 52, y);
+        y += 11;
+
+        const sDateLine = pdfDateText(state.dates, "custom-" + ci.id, !!ci.checked);
+        if(sDateLine){
+          ensureSpace(12);
+          doc.setFont("helvetica","normal").setFontSize(8.5);
+          doc.setTextColor(...dim);
+          doc.text(sDateLine, marginL + 52, y);
+          y += 11;
+        }
+
+        if(ci.feasibilityNote && ci.noteAudience === "customer"){
+          const noteLines = doc.setFont("helvetica","italic").setFontSize(8.5).splitTextToSize(ci.feasibilityNote, contentW - 60);
+          ensureSpace(noteLines.length * 11 + 4);
+          doc.setTextColor(...dim);
+          doc.text(noteLines, marginL + 52, y);
+          y += noteLines.length * 11 + 4;
+        }
+        if(ci.link){
+          ensureSpace(13);
+          doc.setFont("helvetica","normal");
+          doc.setFontSize(8.5);
+          doc.setTextColor(...accentArr);
+          const cleanedLink2 = cleanUrl(ci.link);
+          doc.textWithLink(cleanedLink2, marginL + 52, y, { url: cleanedLink2 });
+          y += 13;
+        }
+        y += 5;
+      });
+      y += 8;
+    });
+  }
+
+  return doc;
+}
+
+async function exportPdf(){
+  const doc = buildPdf();
+  const blob = doc.output("blob");
+  const fname = "cxone-onboarding-" + (slug(state.name) || "checklist") + ".pdf";
+
+  let downloads = null;
+  try{ downloads = await claude.use("downloads"); }catch(e){ downloads = null; }
+
+  if(downloads){
+    try{
+      await downloads.save({ filename: fname, data: blob });
+      showToast("PDF saved");
+      return;
+    }catch(e){
+      // fall through to fallback
+    }
+  }
+  // Fallback: open the PDF in a new tab so the viewer can save it manually
+  const url = URL.createObjectURL(blob);
+  window.open(url, "_blank");
+  showToast("PDF opened in a new tab — save from there");
+}
+
+document.getElementById("custName").addEventListener("change", async (e)=>{
+  const nm = e.target.value.trim();
+  if(!nm) return;
+  const wantId = slug(nm);
+  const wantKey = STORAGE_PREFIX + wantId;
+  if(wantKey === currentKey){
+    state.name = nm;
+    saveState(currentKey, state);
+    renderCustList();
+    return;
+  }
+  const existing = loadState(wantKey);
+  if(existing){
+    currentKey = wantKey;
+    state = existing;
+  } else {
+    currentKey = wantKey;
+    state.name = nm;
+    saveState(currentKey, state);
+  }
+  render();
+  renderCustList();
+});
+
+document.getElementById("custListToggle").addEventListener("click", (e)=>{
+  e.stopPropagation();
+  document.getElementById("custListPanel").classList.toggle("open");
+});
+document.addEventListener("click", (e)=>{
+  const panel = document.getElementById("custListPanel");
+  const toggle = document.getElementById("custListToggle");
+  if(panel && !panel.contains(e.target) && e.target !== toggle && !toggle.contains(e.target)){
+    panel.classList.remove("open");
+  }
+});
+
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  if(!confirm("Reset all checkmarks and notes for " + (state.name || "this checklist") + "?")) return;
+  state.checked = {};
+  state.notes = {};
+  // Completion dates only make sense for checked items. Planned (expected) dates stay.
+  const stillChecked = new Set();
+  Object.values(state.customItems).forEach(list=> (list||[]).forEach(c=>{ if(c.checked) stillChecked.add("custom-" + c.id); }));
+  Object.keys(state.dates).forEach(k=>{ if(!stillChecked.has(k)) setItemDate(k, "done", ""); });
+  saveState(currentKey, state);
+  render();
+  showToast("Checklist reset");
+});
+
+document.getElementById("deleteBtn").addEventListener("click", async ()=>{
+  await deleteCustomerByKey(currentKey, state.name || "this checklist");
+});
+
+document.getElementById("exportBtn").addEventListener("click", async ()=>{
+  const btn = document.getElementById("exportBtn");
+  const original = btn.textContent;
+  btn.textContent = "Building PDF…";
+  btn.disabled = true;
+  try{
+    await exportPdf();
+  }catch(e){
+    showToast("Couldn't build PDF");
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
+});
+
+document.getElementById("themeToggle").addEventListener("click", ()=>{
+  const root = document.documentElement;
+  const cur = root.getAttribute("data-theme");
+  root.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
+});
+
+document.getElementById("vaultConnectBtn").addEventListener("click", connectVaultFolder);
+
+document.getElementById("mdSaveBtn").addEventListener("click", async ()=>{
+  const btn = document.getElementById("mdSaveBtn");
+  const original = btn.textContent;
+  btn.textContent = "Saving…";
+  btn.disabled = true;
+  try{
+    const text = buildMarkdown();
+    const fname = slug(state.name || "untitled") + ".md";
+    if(vaultDirHandle){
+      await writeVaultFile(fname, text);
+      await refreshVaultFileList();
+      showToast("Saved to vault: " + fname);
+    } else {
+      const blob = new Blob([text], { type: "text/markdown" });
+      let downloads = null;
+      try{ downloads = await claude.use("downloads"); }catch(e){ downloads = null; }
+      if(downloads){
+        try{
+          await downloads.save({ filename: fname, data: blob });
+          showToast("Markdown saved");
+        }catch(e){
+          const url = URL.createObjectURL(blob);
+          window.open(url, "_blank");
+          showToast("Opened in a new tab — save from there");
+        }
+      } else {
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+        showToast("Opened in a new tab — save from there");
+      }
+    }
+  }catch(e){
+    showToast("Couldn't save markdown");
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
+});
+
+document.getElementById("mdLoadBtn").addEventListener("click", ()=>{
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".md,text/markdown";
+  input.addEventListener("change", async ()=>{
+    const file = input.files[0];
+    if(!file) return;
+    try{
+      const text = await file.text();
+      const parsed = parseMarkdown(text);
+      state = normalizeState({ name: parsed.name || file.name.replace(/\.md$/i,""), checked: parsed.checked, notes: parsed.notes, customItems: parsed.customItems, itemOverrides: parsed.itemOverrides, hiddenItems: parsed.hiddenItems, hiddenSections: parsed.hiddenSections, itemNotes: parsed.itemNotes, internalNotes: parsed.internalNotes, dates: parsed.dates });
+      currentKey = STORAGE_PREFIX + slug(state.name);
+      document.getElementById("custName").value = state.name || "";
+      saveState(currentKey, state);
+      openSections = new Set([0]);
+      render();
+      renderCustList();
+      showToast("Markdown loaded");
+    }catch(e){
+      showToast("Couldn't read that file");
+    }
+  });
+  input.click();
+});
+
+// init
+(async function init(){
+  renderCustList();
+
+  const rows = buildCustRows();
+  if(rows.length){
+    await switchToKey(rows[0].key);
+  } else {
+    await switchToCustomer(null, "");
+  }
+  await tryRestoreVault();
+  updatePersistBanner();
+})();
+</script>
+</body>
+</html>
