@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1] — 2026-10-30
+
+### Changed
+- Shortened both skill descriptions to the marketplace's 30-word limit.
+- Added `contrib/marketplace-pr.patch`, a ready-to-apply patch for CheckmarxDev/cx-plugin-marketplace.
+
 ## [1.0.0] — 2026-10-30
 
 ### Added

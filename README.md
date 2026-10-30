@@ -30,6 +30,7 @@ plugins/cx-se-onboarding-checklist/      # the plugin (drop-in for CheckmarxDev/
   README.md, CHANGELOG.md, CODEOWNERS
 scripts/check-baseline.py                # fails if the JSON drifts from the HTML's checklist data
 scripts/build-claude-ai-skill.sh         # zips the seeder skill for claude.ai
+contrib/marketplace-pr.patch             # ready-to-apply PR for CheckmarxDev/cx-plugin-marketplace
 ```
 
 See the [plugin README](plugins/cx-se-onboarding-checklist/README.md) for the workflow, prerequisites, and the Markdown contract.
@@ -68,4 +69,12 @@ The `plugins/cx-se-onboarding-checklist` directory follows the layout of `Checkm
      "source": "./plugins/cx-se-onboarding-checklist" }
    ```
 3. Add a row to its README table and a line to `.github/CODEOWNERS`.
-4. Open a PR. Access to that org requires the corporate VPN.
+4. Open a PR.
+
+Or apply the prepared patch, which does steps 1 to 3 in one commit:
+
+```bash
+git -C <marketplace-clone> checkout -b add-cx-se-onboarding-checklist && git -C <marketplace-clone> am <this-repo>/contrib/marketplace-pr.patch
+```
+
+That org requires the corporate VPN, forking is disabled, and pushing a branch needs write access from the marketplace owners listed in its `.github/CODEOWNERS`.

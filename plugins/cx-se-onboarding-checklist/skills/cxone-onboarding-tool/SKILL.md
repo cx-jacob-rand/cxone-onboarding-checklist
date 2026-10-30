@@ -1,6 +1,6 @@
 ---
 name: "cxone-onboarding-tool"
-description: Opens the bundled Checkmarx One onboarding checklist HTML tool in the browser, or copies it to a folder the user names. Use when the user says "open the onboarding checklist", "open the checklist tool", "where is the checklist HTML", or wants to view or track a seeded checklist file.
+description: Opens the bundled Checkmarx One onboarding checklist HTML tool, or copies it to a folder. Use when the user asks to open, find, or view the onboarding checklist tool.
 ---
 
 # Open the onboarding checklist tool

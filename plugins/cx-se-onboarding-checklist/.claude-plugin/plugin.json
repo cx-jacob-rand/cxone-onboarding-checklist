@@ -2,7 +2,7 @@
   "name": "cx-se-onboarding-checklist",
   "displayName": "CX SE Onboarding Checklist",
   "description": "Seed and run a per-customer Checkmarx One onboarding checklist: Claude writes the Markdown, the bundled HTML tool tracks it.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Jacob Rand"
   },

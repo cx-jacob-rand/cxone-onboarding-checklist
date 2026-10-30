@@ -1,6 +1,6 @@
 ---
 name: "cxone-onboarding-seeder"
-description: Seeds a per-customer Checkmarx One onboarding checklist (Markdown for the cxone-onboarding-checklist.html tool) from a customer's raw requirements — discovery notes, an RFP excerpt, a call transcript, a list of asks. Maps each requirement into the right step of the 11-step onboarding sequence, then researches via Confluence, SharePoint, and checkmarx.com whether Checkmarx One can actually do it, tagging each as Supported, Not supported, or Needs verification with a doc link where one exists. Use when the user says "seed the checklist for [customer]", "build the onboarding markdown for this account", "turn these requirements into the checklist", "can we do what they're asking", or pastes customer asks alongside a mention of onboarding, POV, or the checklist tool. One-time seed at kickoff, not an incremental merge — ask before overwriting an existing file for that customer.
+description: Seeds a per-customer Checkmarx One onboarding checklist Markdown from raw customer requirements, feasibility-checked against Confluence, SharePoint, and docs. Use for 'seed the checklist for [customer]' or POV onboarding asks.
 ---
 
 # Checkmarx One Onboarding Seeder
