@@ -16,7 +16,8 @@
         "l": "https://docs.checkmarx.com/en/34965-86574-github-self-hosted.html"
       },
       {
-        "t": "Identify who owns each access decision on the customer's side (SSO/IAM admin, repo admin, security lead) so the kickoff isn't stalled waiting on the right person"
+        "t": "Identify who owns each access decision on the customer's side (SSO/IAM admin, repo admin, security lead) so the kickoff isn't stalled waiting on the right person",
+        "l": "https://docs.checkmarx.com/en/34965-68605-managing-identity-providers.html"
       }
     ]
   },
@@ -83,7 +84,8 @@
         "l": "https://docs.checkmarx.com/en/34965-131121-presets-management.html"
       },
       {
-        "t": "For large/complex codebases, validate expected project size and structure ahead of time (avoid timeouts / misleading first-scan results)"
+        "t": "For large/complex codebases, validate expected project size and structure ahead of time (avoid timeouts / misleading first-scan results)",
+        "l": "https://docs.checkmarx.com/en/34965-239680-file-exclusions-rules.html"
       }
     ]
   },

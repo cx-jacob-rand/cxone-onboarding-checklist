@@ -1,164 +1,71 @@
 # Checkmarx One Onboarding Checklist
 
-Two pieces that work together to turn a customer's raw requirements into a
-clickable, trackable onboarding checklist:
+A Claude Code plugin for SEs and CSMs running a Checkmarx One POV or onboarding. Two parts that share one Markdown file per customer:
 
-1. **`skills/cxone-onboarding-seeder`** — a Claude skill that reads a
-   customer's requirements (notes, RFP excerpt, transcript, a list of asks)
-   and generates a ready-to-load Markdown file.
-2. **`tool/cxone-onboarding-checklist.html`** — a self-contained, no-build
-   HTML app that renders that Markdown as an interactive 11-step onboarding
-   checklist, tracks progress per customer, and exports a clean PDF.
+1. **The seeder skill** reads a customer's raw requirements (discovery notes, an RFP excerpt, a call transcript) and writes a checklist Markdown file. Every customer ask is placed in the right step of the 11-step onboarding sequence and checked against Confluence, SharePoint, and docs.checkmarx.com for whether Checkmarx One can actually do it.
+2. **The HTML tool** renders that file as an interactive checklist, tracks progress per customer, syncs changes back to the Markdown, and exports a customer-facing PDF.
 
-The skill writes the file; the tool reads it. Nothing in this repo
-contains customer data — it's just the skill and the viewer.
+Nothing in this repo contains customer data. Customer files live wherever you point the tool.
+
+## Install
+
+```bash
+claude plugin marketplace add cx-jacob-rand/cxone-onboarding-checklist
+claude plugin install cx-se-onboarding-checklist@cxone-onboarding-checklist
+```
+
+Then in Claude Code: *"open the onboarding checklist"* to launch the tool, or *"seed the checklist for Acme Corp"* with the customer's notes to generate a file.
+
+**claude.ai users:** upload `dist/cxone-onboarding-seeder.zip` (build it with `scripts/build-claude-ai-skill.sh`) under Settings → Capabilities → Skills, and download the HTML tool from [`plugins/cx-se-onboarding-checklist/tool/`](plugins/cx-se-onboarding-checklist/tool/cxone-onboarding-checklist.html).
 
 ## Repo layout
 
 ```
-skills/cxone-onboarding-seeder/
-  SKILL.md                     # the skill's instructions
-  references/baseline-checklist.json  # the 11-section baseline checklist data
-tool/
-  cxone-onboarding-checklist.html     # the interactive viewer/tool
+.claude-plugin/marketplace.json          # makes this repo installable as a marketplace
+plugins/cx-se-onboarding-checklist/      # the plugin (drop-in for CheckmarxDev/cx-plugin-marketplace)
+  .claude-plugin/plugin.json
+  skills/cxone-onboarding-seeder/        # SKILL.md + references/baseline-checklist.json
+  skills/cxone-onboarding-tool/          # opens the HTML tool
+  tool/cxone-onboarding-checklist.html   # the tracker
+  README.md, CHANGELOG.md, CODEOWNERS
+scripts/check-baseline.py                # fails if the JSON drifts from the HTML's checklist data
+scripts/build-claude-ai-skill.sh         # zips the seeder skill for claude.ai
 ```
 
----
+See the [plugin README](plugins/cx-se-onboarding-checklist/README.md) for the workflow, prerequisites, and the Markdown contract.
 
-## 1. The skill: `cxone-onboarding-seeder`
+## The tool at a glance
 
-### What it does
+- 11 fixed sections, from pre-kickoff readiness through migration, each with Checkmarx documentation links.
+- Per-customer state. Switch between customers from **Saved checklists**.
+- **Connect folder…** (Chrome/Edge): the tool reads and writes Markdown files in a folder you choose. Browser storage is only a cache.
+- **Save Markdown** / **Load Markdown** for other browsers.
+- Customer requirements carry a Supported / Not supported / Needs verification tag, a doc link, and a note marked Internal or Customer-facing.
+- Internal notes and expected/done dates per item. Internal notes never reach the PDF.
+- Hide sections or items that don't apply to a customer.
+- **Export PDF** for the leave-behind.
 
-Given a customer name and their raw requirements, the skill:
+## Maintaining
 
-1. Reads the baseline 11-section checklist (`references/baseline-checklist.json`)
-   — the same fixed sequence the tool renders (Pre-kickoff readiness →
-   Tenant fundamentals → IAM → Applications & projects → Scanner config →
-   Repo integration → CI/CD → Policy/gates → IDE plugins/Developer Assist →
-   Reporting → Migration).
-2. Extracts each distinct, actionable ask from the customer's notes and maps
-   it to the section it actually belongs to.
-3. **Checks feasibility for every mapped requirement** — searches Confluence,
-   SharePoint, and checkmarx.com/docs.checkmarx.com to confirm whether
-   Checkmarx One actually supports it, tagging each as `yes` / `no` /
-   `unknown`, with a short note and a documentation link where one exists.
-4. Writes a single `<customer-slug>.md` file in the exact schema the tool's
-   parser expects (see [Markdown schema](#markdown-schema-shared-contract)
-   below).
+The checklist content lives in two places that must agree: the `DATA` constant in the HTML and `baseline-checklist.json` in the skill. After editing either:
 
-This is a **one-time seeding step** at kickoff — not meant to be re-run to
-merge in new requirements later. New requirements after kickoff should be
-added directly in the tool, via its own **"+ Add customer requirement"**
-button in each section.
-
-### How to use it
-
-1. Make sure the skill is installed/available in your Claude session (it's a
-   standard Claude Code / claude.ai skill — drop `skills/cxone-onboarding-seeder`
-   into your skills directory, or install it however your setup loads skills).
-2. In a conversation, give Claude:
-   - the **customer name**, and
-   - the **raw requirements** (pasted notes, a transcript excerpt, an RFP
-     section, or just typed out verbally) — any format is fine.
-3. Ask it to seed the checklist, e.g. *"seed the checklist for Acme Corp"*
-   or *"turn these requirements into the onboarding checklist."*
-4. Claude will report back: how many requirements it placed and where, the
-   feasibility breakdown (Supported / Not supported / Needs verification —
-   calling out the latter two by name), and anything it couldn't place.
-5. It saves `<customer-slug>.md` (e.g. `acme-corp.md`) — load that into the
-   tool directly, or drop it into a folder the tool is watching (see
-   [Vault folder sync](#vault-folder-sync) below).
-
-If the skill detects a seed file already exists for that customer, it asks
-before overwriting rather than silently merging.
-
----
-
-## 2. The tool: `cxone-onboarding-checklist.html`
-
-A single HTML file — no server, no build step, no dependencies to install.
-Open it directly in a browser (double-click, or `open tool/cxone-onboarding-checklist.html`).
-
-### Core features
-
-- **11-section checklist** matching `baseline-checklist.json`, with
-  progress tracking per section and overall.
-- **Per-customer state**, kept in the browser's `localStorage`, keyed by
-  customer name — switch between customers without losing progress.
-- **Load Markdown** — load a seed file produced by the skill (or any file
-  following the same schema).
-- **Save Markdown** — write the current state back out as a `.md` file,
-  downloadable from the browser.
-- **Connect folder…** (Chrome/Edge only, via the File System Access API) —
-  point the tool at a local folder (e.g. an Obsidian vault) and it keeps that
-  folder's Markdown files in sync automatically as you check items off, add
-  notes, or add requirements — no manual Save needed. In unsupported
-  browsers (Safari/Firefox), the tool falls back to manual Save/Load
-  Markdown and says so in the status line.
-- **+ Add customer requirement** (per section) — add new asks after kickoff
-  without re-running the skill; you set the feasibility tag and optional
-  link/note yourself.
-- **Feasibility tags** — customer-requirement items show a Supported /
-  Not supported / Needs verification indicator, an optional documentation
-  link (rendered as a clean clickable hostname), and an optional prose note.
-- **Internal notes** — private, per-item notes (click to add) that are never
-  included in the PDF export.
-- **Export PDF** — a clean, shareable PDF snapshot of current progress.
-
-### Typical workflow
-
-1. Run the skill to seed `<customer>.md` (or start from scratch in the tool).
-2. Open the tool, click **Connect folder…** and point it at the folder
-   holding your seed files (recommended), or just **Load Markdown** the file
-   directly.
-3. Work the checklist during onboarding — check items off, add notes, add
-   new requirements as they come up.
-4. Changes write back to the same Markdown file (automatically if a folder
-   is connected, otherwise via **Save Markdown**) — so the `.md` file is
-   always the source of truth, and the browser's `localStorage` is just a
-   local cache.
-5. **Export PDF** whenever you need a leave-behind or status snapshot.
-
----
-
-## Markdown schema (shared contract)
-
-Both the skill and the tool depend on this exact structure — the tool's
-parser is regex-based, so deviating from it (wrong section numbers, missing
-HTML comments, blank lines in the wrong place) will cause items to not load
-or not match correctly.
-
-```markdown
----
-customer: <Customer Name>
-updated: <ISO 8601 timestamp>
-tool: cxone-onboarding-checklist
----
-
-# Checkmarx One Onboarding — <Customer Name>
-
-## 0. Pre-kickoff readiness
-
-- [ ] <mandatory item text, verbatim from baseline-checklist.json> <!-- item:0-0 -->
-- [x] <a customer requirement> <!-- item:custom-a1b2c3 feasible:yes link:https://docs.checkmarx.com/... -->
-  > **Feasibility:** <prose note, no URL in it>
-
-## 1. Tenant & account fundamentals
-...
+```bash
+python3 scripts/check-baseline.py            # report drift
+python3 scripts/check-baseline.py --write    # regenerate the JSON from the HTML
 ```
 
-Key rules:
+Bump `version` in `plugin.json` and add a `CHANGELOG.md` entry with each release.
 
-- All **11 sections** (`## 0.` through `## 10.`) must be present, in order,
-  even if empty of customer items.
-- **Mandatory items** come first in each section, tagged
-  `<!-- item:<section>-<index> -->`, matching `baseline-checklist.json`
-  exactly (0-indexed on both axes).
-- **Customer-requirement items** come after, tagged
-  `<!-- item:custom-<id> feasible:<yes|no|unknown> -->`, with an optional
-  `link:<full https:// URL>` token.
-- A feasibility note, when present, is the **very next line** after its item
-  (no blank line in between): `  > **Feasibility:** <note>`.
-- Checkbox state (`[ ]` / `[x]`) reflects completion, not feasibility.
+## Publishing to the internal marketplace
 
-See `skills/cxone-onboarding-seeder/SKILL.md` for the full generation rules.
+The `plugins/cx-se-onboarding-checklist` directory follows the layout of `CheckmarxDev/cx-plugin-marketplace`. To publish there:
+
+1. Copy the directory into that repo's `plugins/`.
+2. Add this entry to its `.claude-plugin/marketplace.json`:
+   ```json
+   { "name": "cx-se-onboarding-checklist",
+     "description": "Seed and run a per-customer Checkmarx One onboarding checklist: Claude writes the Markdown, the bundled HTML tool tracks it.",
+     "source": "./plugins/cx-se-onboarding-checklist" }
+   ```
+3. Add a row to its README table and a line to `.github/CODEOWNERS`.
+4. Open a PR. Access to that org requires the corporate VPN.

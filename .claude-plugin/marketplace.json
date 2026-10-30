@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "cxone-onboarding-checklist",
+  "description": "Checkmarx One onboarding checklist: seeder skill plus the interactive HTML tracker, packaged as a Claude Code plugin.",
+  "owner": {
+    "name": "Jacob Rand"
+  },
+  "plugins": [
+    {
+      "name": "cx-se-onboarding-checklist",
+      "description": "Seed and run a per-customer Checkmarx One onboarding checklist: Claude writes the Markdown, the bundled HTML tool tracks it.",
+      "category": "productivity",
+      "source": "./plugins/cx-se-onboarding-checklist"
+    }
+  ]
+}
